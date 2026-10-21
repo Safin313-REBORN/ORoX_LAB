@@ -163,6 +163,90 @@ export const CircuitCanvas: React.FC = () => {
     return calculateAbsolutePinPosition(comp, pinDef);
   };
 
+  const getPinNormal = (comp: ComponentInstance, pinId: string): { x: number; y: number } => {
+    const pin = resolvePinDefinition(comp, pinId, project.boardId);
+    const isESP32 = comp.type === 'esp32doit-devkit-v1' || comp.type === 'board';
+    let nx = 0;
+    let ny = 0;
+
+    if (isESP32 && pin) {
+      nx = pin.x <= 30 ? -1 : 1;
+      ny = 0;
+    } else if (comp.type === 'led' || comp.type === 'rgb-led') {
+      nx = 0;
+      ny = 1;
+    } else if (comp.type === 'resistor') {
+      nx = pin && pin.x < 40 ? -1 : 1;
+      ny = 0;
+    } else if (comp.type === 'push-button') {
+      nx = pin && pin.x < 35 ? -1 : 1;
+      ny = 0;
+    } else if (comp.type === 'active-buzzer' || comp.type === 'passive-buzzer') {
+      nx = 0;
+      ny = 1;
+    } else if (pin) {
+      const meta = COMPONENT_CATALOG[comp.type];
+      const w = meta?.width || 100;
+      const h = meta?.height || 100;
+
+      const distLeft = pin.x;
+      const distRight = w - pin.x;
+      const distTop = pin.y;
+      const distBottom = h - pin.y;
+
+      const minDist = Math.min(distLeft, distRight, distTop, distBottom);
+      if (minDist === distLeft) { nx = -1; ny = 0; }
+      else if (minDist === distRight) { nx = 1; ny = 0; }
+      else if (minDist === distTop) { nx = 0; ny = -1; }
+      else { nx = 0; ny = 1; }
+    } else {
+      nx = 1;
+      ny = 0;
+    }
+
+    if (comp.rotation) {
+      const rad = (comp.rotation * Math.PI) / 180;
+      const cos = Math.cos(rad);
+      const sin = Math.sin(rad);
+      const rx = nx * cos - ny * sin;
+      const ry = nx * sin + ny * cos;
+      return { x: rx, y: ry };
+    }
+
+    return { x: nx, y: ny };
+  };
+
+  const calculateWirePath = (
+    p1: { x: number; y: number },
+    p2: { x: number; y: number },
+    n1: { x: number; y: number },
+    n2: { x: number; y: number }
+  ): string => {
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist < 1) return `M ${p1.x} ${p1.y} L ${p2.x} ${p2.y}`;
+
+    const baseDist = Math.min(130, Math.max(30, dist * 0.42));
+    const dot1 = (dx * n1.x + dy * n1.y) / dist;
+    const dot2 = (-dx * n2.x - dy * n2.y) / dist;
+
+    const factor1 = dot1 < 0 ? 1.3 : 1.0;
+    const factor2 = dot2 < 0 ? 1.3 : 1.0;
+
+    let cp1x = p1.x + n1.x * (baseDist * factor1);
+    let cp1y = p1.y + n1.y * (baseDist * factor1);
+    let cp2x = p2.x + n2.x * (baseDist * factor2);
+    let cp2y = p2.y + n2.y * (baseDist * factor2);
+
+    const sag = Math.min(22, Math.max(0, dist * 0.05));
+    cp1y += sag;
+    cp2y += sag;
+
+    return `M ${p1.x} ${p1.y} C ${cp1x.toFixed(1)} ${cp1y.toFixed(1)}, ${cp2x.toFixed(1)} ${cp2y.toFixed(1)}, ${p2.x} ${p2.y}`;
+  };
+
   const selectedWire = project.wires.find(w => w.id === selectedWireId);
 
   return (
@@ -270,9 +354,12 @@ export const CircuitCanvas: React.FC = () => {
           {project.wires.map((wire) => {
             const p1 = getEndpointPos(wire.start);
             const p2 = getEndpointPos(wire.end);
+            const comp1 = project.components.find(c => c.id === wire.start.componentId);
+            const comp2 = project.components.find(c => c.id === wire.end.componentId);
+            const n1 = comp1 ? getPinNormal(comp1, wire.start.pinId) : { x: 1, y: 0 };
+            const n2 = comp2 ? getPinNormal(comp2, wire.end.pinId) : { x: -1, y: 0 };
             const isSelected = selectedWireId === wire.id;
-            const dx = Math.abs(p2.x - p1.x) * 0.55;
-            const pathD = `M ${p1.x} ${p1.y} C ${p1.x + dx} ${p1.y}, ${p2.x - dx} ${p2.y}, ${p2.x} ${p2.y}`;
+            const pathD = calculateWirePath(p1, p2, n1, n2);
 
             return (
               <g 
@@ -281,20 +368,38 @@ export const CircuitCanvas: React.FC = () => {
                 onClick={(e) => { e.stopPropagation(); selectWire(wire.id); }}
               >
                 {/* Wide invisible click target */}
-                <path d={pathD} fill="none" stroke="transparent" strokeWidth="16" />
+                <path d={pathD} fill="none" stroke="transparent" strokeWidth="22" />
                 {/* Ambient wire shadow */}
-                <path d={pathD} fill="none" stroke="rgba(0,0,0,0.4)" strokeWidth="5" transform="translate(1, 2)" />
-                {/* Visible colored wire */}
+                <path d={pathD} fill="none" stroke="rgba(0,0,0,0.5)" strokeWidth="5.5" strokeLinecap="round" transform="translate(1, 3)" filter="blur(1px)" />
+                {/* Visible colored wire body */}
                 <path
                   d={pathD}
                   fill="none"
                   stroke={isSelected ? '#38bdf8' : wire.color}
-                  strokeWidth={isSelected ? '4' : '3'}
+                  strokeWidth={isSelected ? '4' : '3.2'}
+                  strokeLinecap="round"
                   filter={isSelected ? 'url(#wire-glow)' : undefined}
                 />
-                {/* Connection beads */}
-                <circle cx={p1.x} cy={p1.y} r="4" fill={wire.color} stroke="#ffffff" strokeWidth="1" />
-                <circle cx={p2.x} cy={p2.y} r="4" fill={wire.color} stroke="#ffffff" strokeWidth="1" />
+                {/* 3D Specular highlight line */}
+                <path
+                  d={pathD}
+                  fill="none"
+                  stroke="rgba(255,255,255,0.3)"
+                  strokeWidth="1"
+                  strokeLinecap="round"
+                  transform="translate(0, -0.6)"
+                />
+                {/* Precision DuPont Jumper Terminal Ferrules */}
+                <g>
+                  <circle cx={p1.x} cy={p1.y} r="3.2" fill="#0f172a" stroke="#334155" strokeWidth="0.75" />
+                  <circle cx={p1.x} cy={p1.y} r="1.8" fill={wire.color} />
+                  <circle cx={p1.x - 0.6} cy={p1.y - 0.6} r="0.6" fill="#ffffff" opacity="0.6" />
+                </g>
+                <g>
+                  <circle cx={p2.x} cy={p2.y} r="3.2" fill="#0f172a" stroke="#334155" strokeWidth="0.75" />
+                  <circle cx={p2.x} cy={p2.y} r="1.8" fill={wire.color} />
+                  <circle cx={p2.x - 0.6} cy={p2.y - 0.6} r="0.6" fill="#ffffff" opacity="0.6" />
+                </g>
               </g>
             );
           })}
@@ -304,17 +409,27 @@ export const CircuitCanvas: React.FC = () => {
             (() => {
               const p1 = getEndpointPos(wireStart);
               const p2 = cursorPos;
-              const dx = Math.abs(p2.x - p1.x) * 0.5;
-              const pathD = `M ${p1.x} ${p1.y} C ${p1.x + dx} ${p1.y}, ${p2.x - dx} ${p2.y}, ${p2.x} ${p2.y}`;
+              const startComp = project.components.find(c => c.id === wireStart.componentId);
+              const n1 = startComp ? getPinNormal(startComp, wireStart.pinId) : { x: 1, y: 0 };
+              const dx = p1.x - p2.x;
+              const dy = p1.y - p2.y;
+              const dLen = Math.sqrt(dx * dx + dy * dy) || 1;
+              const n2 = { x: dx / dLen, y: dy / dLen };
+              const pathD = calculateWirePath(p1, p2, n1, n2);
               return (
-                <path
-                  d={pathD}
-                  fill="none"
-                  stroke="#38bdf8"
-                  strokeWidth="3"
-                  strokeDasharray="6,4"
-                  filter="url(#wire-glow)"
-                />
+                <g>
+                  <path
+                    d={pathD}
+                    fill="none"
+                    stroke="#38bdf8"
+                    strokeWidth="3.2"
+                    strokeDasharray="6,4"
+                    filter="url(#wire-glow)"
+                  />
+                  <circle cx={p1.x} cy={p1.y} r="3.2" fill="#0f172a" stroke="#38bdf8" strokeWidth="1" />
+                  <circle cx={p1.x} cy={p1.y} r="1.8" fill="#38bdf8" />
+                  <circle cx={p2.x} cy={p2.y} r="3" fill="#38bdf8" className="animate-pulse" />
+                </g>
               );
             })()
           )}
@@ -359,23 +474,27 @@ export const CircuitCanvas: React.FC = () => {
                   <div className="absolute bottom-2 left-2 w-3 h-3 rounded-full border-2 border-amber-500/80 bg-[#090e18] shadow-inner" />
                   <div className="absolute bottom-2 right-2 w-3 h-3 rounded-full border-2 border-amber-500/80 bg-[#090e18] shadow-inner" />
 
-                  {/* LEFT PIN HEADER SILKSCREEN LABELS */}
-                  <div className="absolute left-[26px] top-[37px] flex flex-col space-y-[9px] pointer-events-none z-0">
-                    {boardMeta.pins.slice(0, 15).map(p => (
-                      <span key={p.id} className="text-[8px] font-mono font-bold text-slate-300 tracking-tight leading-none">
-                        {p.label || p.name}
-                      </span>
-                    ))}
-                  </div>
+                  {/* LEFT PIN HEADER SILKSCREEN LABELS (EXACTLY ALIGNED WITH EACH PIN VIA) */}
+                  {boardMeta.pins.slice(0, 15).map(p => (
+                    <span
+                      key={p.id}
+                      className="absolute left-[26px] -translate-y-1/2 text-[8px] font-mono font-bold text-slate-300 tracking-tight leading-none pointer-events-none z-0"
+                      style={{ top: p.y }}
+                    >
+                      {p.label || p.name}
+                    </span>
+                  ))}
 
-                  {/* RIGHT PIN HEADER SILKSCREEN LABELS */}
-                  <div className="absolute right-[26px] top-[37px] flex flex-col space-y-[9px] items-end pointer-events-none z-0">
-                    {boardMeta.pins.slice(15, 30).map(p => (
-                      <span key={p.id} className="text-[8px] font-mono font-bold text-slate-300 tracking-tight leading-none text-right">
-                        {p.label || p.name}
-                      </span>
-                    ))}
-                  </div>
+                  {/* RIGHT PIN HEADER SILKSCREEN LABELS (EXACTLY ALIGNED WITH EACH PIN VIA) */}
+                  {boardMeta.pins.slice(15, 30).map(p => (
+                    <span
+                      key={p.id}
+                      className="absolute right-[26px] -translate-y-1/2 text-[8px] font-mono font-bold text-slate-300 tracking-tight leading-none text-right pointer-events-none z-0"
+                      style={{ top: p.y }}
+                    >
+                      {p.label || p.name}
+                    </span>
+                  ))}
 
                   {/* Top Antenna Area */}
                   <div className="w-20 h-6 bg-[#0a151e] rounded border border-amber-600/40 mt-1 flex items-center justify-center relative overflow-hidden">
@@ -634,44 +753,81 @@ export const CircuitCanvas: React.FC = () => {
                 </div>
               ) : comp.type === 'led' ? (
                 /* ───────────────────────────────────────────────────────── */
-                /* 9. REALISTIC 5mm THROUGH-HOLE LED WITH INTENSE GLOW       */
+                /* 9. REALISTIC 5mm THROUGH-HOLE LED WITH METALLIC LEADS     */
                 /* ───────────────────────────────────────────────────────── */
-                <div className="w-[50px] h-[70px] flex flex-col items-center justify-between select-none">
+                <div className="w-[50px] h-[72px] relative select-none flex flex-col items-center">
                   {/* 3D Glass Bulb Dome */}
                   <div
-                    className={`w-9 h-11 rounded-t-full rounded-b-md transition-all duration-150 relative border ${
+                    className={`w-9 h-10 rounded-t-full rounded-b-sm transition-all duration-150 relative border ${
                       simulationTelemetry.pinStates['GPIO4'] === 1 || comp.state?.illuminated
                         ? 'bg-rose-500 border-rose-300 shadow-[0_0_35px_10px_rgba(244,63,94,0.85),inset_0_0_12px_rgba(255,255,255,0.8)]'
-                        : 'bg-rose-950/70 border-rose-800 shadow-clay-card'
+                        : 'bg-rose-950/80 border-rose-800 shadow-clay-card'
                     }`}
+                    style={{ top: 2 }}
                   >
                     {/* Specular glass reflection */}
-                    <div className="w-2 h-4 rounded-full bg-white/40 absolute top-2 left-2 blur-[0.5px]" />
-                    {/* Internal Anode / Cathode anvil cup */}
-                    <div className="w-3 h-3 border-b border-l border-slate-300/40 absolute bottom-1.5 left-3" />
+                    <div className="w-2 h-4 rounded-full bg-white/40 absolute top-1.5 left-2 blur-[0.5px]" />
+                    {/* Internal Anode / Cathode anvil cup & wire bond */}
+                    <div className="w-3 h-3 border-b border-l border-slate-200/50 absolute bottom-1.5 left-3" />
+                    <div className="w-1.5 h-1.5 bg-slate-300/40 rounded-full absolute bottom-2 left-3.5" />
                   </div>
 
-                  {/* Cathode Notch & Leads */}
-                  <div className="w-8 flex justify-around">
-                    <div className="w-0.5 h-4 bg-slate-300" />
-                    <div className="w-0.5 h-3 bg-slate-400" />
+                  {/* Flange Collar Rim with Cathode Flat Notch on right side */}
+                  <div className="w-10 h-1.5 bg-rose-900/90 border border-rose-800/80 rounded-sm relative" style={{ top: 1 }}>
+                    <div className="w-1.5 h-full bg-[#0a0f1d] absolute right-0" />
                   </div>
+
+                  {/* Metal Lead: Anode (Left, +, pin at x: 18, y: 60) */}
+                  <div
+                    className="absolute w-[2.5px] bg-gradient-to-r from-slate-200 via-slate-100 to-slate-400 shadow-sm border-x border-slate-400/50"
+                    style={{ left: 16.75, top: 43, height: 17 }}
+                  />
+                  <span className="absolute text-[7px] font-bold text-slate-400 font-mono pointer-events-none select-none" style={{ left: 13, top: 46 }}>
+                    +
+                  </span>
+
+                  {/* Metal Lead: Cathode (Right, -, pin at x: 32, y: 60) */}
+                  <div
+                    className="absolute w-[2.5px] bg-gradient-to-r from-slate-200 via-slate-100 to-slate-400 shadow-sm border-x border-slate-400/50"
+                    style={{ left: 30.75, top: 43, height: 17 }}
+                  />
+                  <span className="absolute text-[7px] font-bold text-slate-400 font-mono pointer-events-none select-none" style={{ left: 36, top: 46 }}>
+                    -
+                  </span>
                 </div>
               ) : comp.type === 'resistor' ? (
                 /* ───────────────────────────────────────────────────────── */
                 /* 10. REALISTIC THROUGH-HOLE AXIAL RESISTOR                 */
                 /* ───────────────────────────────────────────────────────── */
-                <div className="w-[80px] h-[32px] flex items-center justify-center select-none">
-                  {/* Left lead wire */}
-                  <div className="w-3 h-[2px] bg-slate-300 shadow" />
-                  {/* Ceramic Body with 3D bulbous ends */}
-                  <div className="w-12 h-6 bg-gradient-to-b from-[#e8cfb3] via-[#d6b490] to-[#b38e67] border border-[#a37e58] rounded-full flex items-center justify-around px-1 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.7),inset_-1px_-1px_3px_rgba(0,0,0,0.4),2px_3px_6px_rgba(0,0,0,0.3)]">
-                    {/* Color Bands (e.g. Red, Red, Brown, Gold for 220 Ohm) */}
-                    <div className="w-1 h-full bg-rose-600 shadow-sm" />
-                    <div className="w-1 h-full bg-rose-600 shadow-sm" />
-                    <div className="w-1 h-full bg-amber-800 shadow-sm" />
-                    <div className="w-1 h-full bg-amber-400 shadow-sm" />
+                <div className="w-[80px] h-[32px] relative select-none flex items-center">
+                  {/* Left Metallic Lead Wire (from pin at x: 8 to ceramic body at x: 22) */}
+                  <div
+                    className="absolute h-[2.5px] bg-gradient-to-b from-slate-200 via-slate-100 to-slate-400 shadow-sm border-y border-slate-400/50"
+                    style={{ left: 8, width: 14, top: 14.75 }}
+                  />
+
+                  {/* Ceramic Body with 3D dumbbell contour (x: 22 to x: 58, centered at x: 40) */}
+                  <div
+                    className="absolute h-5 bg-gradient-to-b from-[#ebd5ba] via-[#d6b490] to-[#a37e58] border border-[#8f6d49] rounded-full flex items-center justify-around px-1 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.7),inset_-1px_-1px_3px_rgba(0,0,0,0.4),1px_2px_5px_rgba(0,0,0,0.4)]"
+                    style={{ left: 22, width: 36, top: 6 }}
+                  >
+                    {/* Realistic 4-Band Color Code (e.g. 220Ω: Red, Red, Brown, Gold) */}
+                    <div className="w-1 h-full bg-rose-600 shadow-sm rounded-sm" title="2" />
+                    <div className="w-1 h-full bg-rose-600 shadow-sm rounded-sm" title="2" />
+                    <div className="w-1 h-full bg-amber-800 shadow-sm rounded-sm" title="x10" />
+                    <div className="w-1 h-full bg-amber-400 shadow-sm rounded-sm" title="5% Tol" />
                   </div>
+
+                  {/* Right Metallic Lead Wire (from ceramic body at x: 58 to pin at x: 72) */}
+                  <div
+                    className="absolute h-[2.5px] bg-gradient-to-b from-slate-200 via-slate-100 to-slate-400 shadow-sm border-y border-slate-400/50"
+                    style={{ left: 58, width: 14, top: 14.75 }}
+                  />
+
+                  {/* Micro Silkscreen Resistance Label */}
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 text-[7px] font-mono font-bold text-amber-200/90 pointer-events-none">
+                    {comp.properties?.resistance ? `${comp.properties.resistance}Ω` : '220Ω'}
+                  </span>
                 </div>
               ) : comp.type === 'l298n' ? (
                 /* ───────────────────────────────────────────────────────── */
@@ -971,13 +1127,20 @@ export const CircuitCanvas: React.FC = () => {
               ) : null}
 
               {/* ───────────────────────────────────────────────────────── */}
-              {/* INTERACTIVE PIN PORTS (REALISTIC GOLD VIA PADS + TOOLTIP)  */}
+              {/* INTERACTIVE PIN PORTS (REALISTIC EYELETS / VIA PADS)      */}
               {/* ───────────────────────────────────────────────────────── */}
               {pins.map((pin) => {
                 const isHovered = hoveredPin?.componentId === comp.id && hoveredPin?.pinId === pin.id;
                 const isWireTarget = wireStart?.componentId === comp.id && wireStart?.pinId === pin.id;
                 const gpioName = pin.gpioNum !== undefined ? `GPIO${pin.gpioNum}` : null;
                 const liveValue = gpioName ? simulationTelemetry.pinStates[gpioName] : undefined;
+
+                const connectedWire = project.wires.find(
+                  w => (w.start.componentId === comp.id && w.start.pinId === pin.id) ||
+                       (w.end.componentId === comp.id && w.end.pinId === pin.id)
+                );
+                const isConnected = !!connectedWire;
+                const isDiscrete = comp.type === 'led' || comp.type === 'rgb-led' || comp.type === 'resistor';
 
                 return (
                   <div
@@ -988,26 +1151,39 @@ export const CircuitCanvas: React.FC = () => {
                     onMouseLeave={() => setHoveredPin(null)}
                     onClick={(e) => handlePinClick(comp, pin, e)}
                   >
-                    {/* Metallic Gold Pin Socket / Solder Via */}
+                    {/* Metallic Pin Socket / Solder Eyelet */}
                     <div
                       className={`w-3.5 h-3.5 rounded-full flex items-center justify-center transition-all ${
                         isWireTarget
-                          ? 'bg-cyan-400 ring-4 ring-cyan-400/50 scale-125 shadow-[0_0_12px_#38bdf8]'
+                          ? 'bg-cyan-400 ring-4 ring-cyan-400/50 scale-125 shadow-[0_0_14px_#38bdf8]'
                           : isHovered
                           ? 'bg-amber-300 ring-2 ring-amber-300 scale-125 shadow-[0_0_10px_#fbbf24]'
-                          : 'bg-gradient-to-br from-amber-200 via-amber-400 to-amber-600 border border-amber-600/80 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.7),1px_1px_3px_rgba(0,0,0,0.5)]'
+                          : isDiscrete
+                          ? 'bg-gradient-to-br from-slate-100 via-slate-300 to-slate-400 border border-slate-400/90 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.9),0_1px_2px_rgba(0,0,0,0.5)]'
+                          : 'bg-gradient-to-br from-amber-200 via-amber-400 to-amber-600 border border-amber-600/90 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.8),0_1px_2px_rgba(0,0,0,0.6)]'
                       }`}
                     >
-                      {/* Center Solder Hole */}
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#0a0f18] shadow-inner" />
+                      {/* Center Socket Hole with Connected Wire Core */}
+                      <div
+                        className="w-1.5 h-1.5 rounded-full transition-colors shadow-inner flex items-center justify-center"
+                        style={{
+                          backgroundColor: isConnected && connectedWire
+                            ? connectedWire.color
+                            : '#080d16'
+                        }}
+                      >
+                        {isConnected && (
+                          <div className="w-0.5 h-0.5 rounded-full bg-white opacity-80" />
+                        )}
+                      </div>
                     </div>
 
-                    {/* Clean Floating Claymorphic Pin Tooltip on Hover ONLY */}
-                    <div className="hidden group-hover:block absolute left-5 top-1/2 -translate-y-1/2 z-50 bg-[#12192c] border border-cyan-500/30 text-slate-100 text-[10px] font-mono px-3 py-2 rounded-2xl shadow-clay-card whitespace-nowrap pointer-events-none animate-fadeIn">
-                      <div className="font-bold text-cyan-400 text-xs flex items-center space-x-1">
+                    {/* Clean Floating Claymorphic Pin Tooltip on Hover */}
+                    <div className="hidden group-hover:block absolute left-5 top-1/2 -translate-y-1/2 z-50 bg-[#12192c]/95 backdrop-blur-md border border-cyan-500/30 text-slate-100 text-[10px] font-mono px-3 py-2 rounded-2xl shadow-clay-card whitespace-nowrap pointer-events-none animate-fadeIn">
+                      <div className="font-bold text-cyan-400 text-xs flex items-center space-x-1.5">
                         <span>{pin.label || pin.name}</span>
                         {pin.direction && (
-                          <span className="text-[8px] uppercase px-1 rounded bg-[#1c2742] text-slate-300 font-sans">
+                          <span className="text-[8px] uppercase px-1.5 py-0.5 rounded bg-[#1c2742] text-slate-300 font-sans font-bold">
                             {pin.direction}
                           </span>
                         )}
@@ -1021,7 +1197,7 @@ export const CircuitCanvas: React.FC = () => {
                         </div>
                       )}
                       <div className="text-[8px] text-amber-400 mt-1 font-sans font-semibold">
-                        Click to draw wire
+                        {isConnected ? 'Wire connected • Click to branch' : 'Click to draw wire'}
                       </div>
                     </div>
                   </div>
