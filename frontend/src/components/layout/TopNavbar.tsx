@@ -5,7 +5,7 @@ import { BOARD_DEFINITIONS } from '../../boards/boardRegistry';
 import { 
   Play, Square, RotateCcw, Cpu, Download, Upload, 
   CheckCircle2, AlertTriangle, XCircle, Layers, ShieldCheck,
-  Undo2, Redo2, Sparkles, Box, Sliders, Code2
+  Undo2, Redo2, Sparkles, Box, Sliders, Code2, Calculator 
 } from 'lucide-react';
 
 export const TopNavbar: React.FC = () => {
@@ -17,9 +17,11 @@ export const TopNavbar: React.FC = () => {
     isLibraryOpen,
     isInspectorOpen,
     isBottomOpen,
+    isFormulasOpen,
     toggleLibrary,
     toggleInspector,
     toggleBottom,
+    toggleFormulas,
     setBoard,
     setFramework,
     setSimulationMode,
@@ -219,6 +221,20 @@ export const TopNavbar: React.FC = () => {
         >
           <Code2 className="w-3.5 h-3.5 text-cyan-400" />
           <span className="hidden md:inline">Code</span>
+        </button>
+
+        {/* Toggle Robotics Formulas & Laws Studio */}
+        <button
+          onClick={toggleFormulas}
+          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+            isFormulasOpen
+              ? 'clay-btn-primary text-white shadow-clay-btn'
+              : 'bg-[#161f36] hover:bg-[#1d2947] text-slate-300 border border-white/[0.08] shadow-clay-card-sm'
+          }`}
+          title="Robotics Engineering Laws, Formulas & Live Calculators"
+        >
+          <Calculator className="w-3.5 h-3.5 text-amber-400" />
+          <span className="hidden lg:inline">Laws & Math</span>
         </button>
 
         <div className="hidden xl:flex items-center space-x-1">

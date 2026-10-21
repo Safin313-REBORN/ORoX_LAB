@@ -4,6 +4,7 @@ import { MPU6050Model } from '../simulation/models/mpu6050';
 import { BatteryModel } from '../simulation/models/battery';
 import { STARTER_PROJECTS } from '../templates/starterProjects';
 import { BOARD_DEFINITIONS } from '../boards/boardRegistry';
+import { COMPONENT_CATALOG } from '../simulation/models/componentRegistry';
 
 describe('SSD1306 OLED Model', () => {
   it('initializes with a clean 1024-byte framebuffer for 128x64 pixels', () => {
@@ -96,8 +97,8 @@ describe('Battery & TP4056 Subsystem', () => {
 });
 
 describe('Starter Projects Integrity', () => {
-  it('includes all 8 mandatory starter projects with complete schemas', () => {
-    expect(STARTER_PROJECTS.length).toBe(8);
+  it('includes all 10 starter projects including robotics rovers with complete schemas', () => {
+    expect(STARTER_PROJECTS.length).toBeGreaterThanOrEqual(10);
 
     for (const starter of STARTER_PROJECTS) {
       expect(starter.id).toBeDefined();
@@ -108,4 +109,40 @@ describe('Starter Projects Integrity', () => {
       expect(BOARD_DEFINITIONS[starter.project.boardId]).toBeDefined();
     }
   });
+});
+
+describe('Robotics Components Catalog Integrity', () => {
+  const roboticsTypes = [
+    'l298n',
+    'dc-motor',
+    'stepper-motor',
+    'ir-tracker',
+    'pir-sensor',
+    'gas-sensor',
+    'photoresistor',
+    'relay',
+    'rgb-led',
+    'rotary-encoder',
+  ];
+
+  for (const type of roboticsTypes) {
+    it(`verifies ${type} definition has valid pins, dimensions, and realistic metadata`, () => {
+      const def = (COMPONENT_CATALOG as Record<string, any>)[type];
+      expect(def).toBeDefined();
+      expect(def.name).toBeTruthy();
+      expect(def.pins.length).toBeGreaterThan(0);
+      expect(def.width).toBeGreaterThan(20);
+      expect(def.height).toBeGreaterThan(20);
+
+      // Verify all pins have unique IDs and coordinates
+      const pinIds = new Set();
+      for (const pin of def.pins) {
+        expect(pinIds.has(pin.id)).toBe(false);
+        pinIds.add(pin.id);
+        expect(typeof pin.x).toBe('number');
+        expect(typeof pin.y).toBe('number');
+        expect(pin.name).toBeTruthy();
+      }
+    });
+  }
 });

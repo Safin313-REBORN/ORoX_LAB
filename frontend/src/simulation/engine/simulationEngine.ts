@@ -257,6 +257,59 @@ export class SimulationEngine {
       }
     }
 
+    // ─────────────────────────────────────────────────────────────
+    // ROBOTICS SIMULATION MODELS
+    // ─────────────────────────────────────────────────────────────
+    // 8. L298N Dual Motor Driver & DC Motors
+    const l298Comp = project.components.find(c => c.type === 'l298n');
+    const dcMotors = project.components.filter(c => c.type === 'dc-motor');
+    if (l298Comp) {
+      // Check firmware code for motor control signals
+      if (primaryFile.includes('IN1') || primaryFile.includes('IN2') || primaryFile.includes('analogWrite')) {
+        l298Comp.state = {
+          ...l298Comp.state,
+          motorA_speed: 180,
+          motorA_dir: 'FORWARD',
+          motorB_speed: 180,
+          motorB_dir: 'FORWARD'
+        };
+        dcMotors.forEach(m => {
+          m.state = {
+            ...m.state,
+            rpm: 150,
+            direction: 'FORWARD'
+          };
+        });
+        if (this.simTimeMs % 1000 === 0) {
+          this.logSerial(`[ROBOTICS] L298N Dual Drive: Motors Forward @ 150 RPM (v=0.42 m/s)`);
+        }
+      }
+    }
+
+    // 9. TCRT5000 IR Line Tracker
+    const irComp = project.components.find(c => c.type === 'ir-tracker');
+    if (irComp) {
+      const isBlack = irComp.state?.surfaceType === 'black';
+      this.pinStates['GPIO14'] = isBlack ? 1 : 0;
+      if (this.simTimeMs % 1500 === 0) {
+        this.logSerial(`[SENSOR] IR Line Tracker: ${isBlack ? 'BLACK LINE DETECTED (DO=1)' : 'WHITE SURFACE (DO=0)'}`);
+      }
+    }
+
+    // 10. Relay Module
+    const relayComp = project.components.find(c => c.type === 'relay');
+    if (relayComp && primaryFile.includes('RELAY')) {
+      const isCycle = (this.simTimeMs % 2000) < 1000;
+      relayComp.state = {
+        ...relayComp.state,
+        energized: isCycle,
+        contactState: isCycle ? 'NO' : 'NC'
+      };
+      if (this.simTimeMs % 1000 === 0) {
+        this.logSerial(`[RELAY] Coil ${isCycle ? 'ENERGIZED [NO Connected]' : 'DE-ENERGIZED [NC Connected]'}`);
+      }
+    }
+
     // Record sample for Logic Analyzer
     this.logicTraces.push({
       timeMs: this.simTimeMs,

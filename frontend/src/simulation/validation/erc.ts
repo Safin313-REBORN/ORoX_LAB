@@ -50,33 +50,38 @@ export function runElectricalRuleCheck(
   }
 
   // 2. Active IC Power & Ground Path Verification
-  const activeComponentsRequiringPower = ['ssd1306', 'mpu6050', 'max98357a', 'ttp223', 'active-buzzer'];
+  const activeComponentsRequiringPower = [
+    'ssd1306', 'mpu6050', 'max98357a', 'ttp223',
+    'l298n', 'ir-tracker', 'pir-sensor', 'gas-sensor', 'photoresistor',
+    'relay', 'rotary-encoder', 'stepper-motor'
+  ];
   for (const comp of components) {
     if (!activeComponentsRequiringPower.includes(comp.type)) continue;
     const meta = COMPONENT_CATALOG[comp.type];
     if (!meta) continue;
 
-    // Check VCC connected to a power rail
-    const vccPin = meta.pins.find(p => p.id === 'vcc' || p.id === 'vin' || p.id === 'pos');
-    if (vccPin) {
-      const vccKey = pinKey({ componentId: comp.id, pinId: vccPin.id });
-      const net = Array.from(nets.values()).find(n => n.pins.some(ep => pinKey(ep) === vccKey));
-      const isConnectedToVcc = net && (net.pins.length > 1) && net.pins.some(ep => {
-        const otherComp = componentMap.get(ep.componentId);
-        if (!otherComp || ep.componentId === comp.id) return false;
-        const otherPin = resolvePinDefinition(otherComp, ep.pinId, boardId);
-        return otherPin && (otherPin.signalType === 'POWER_VCC' || otherPin.name === '3V3' || otherPin.name === 'VIN');
+    // Check VCC connected to a power rail (or positive rail)
+    const vccPins = meta.pins.filter(p => p.id === 'vcc' || p.id === 'vin' || p.id === 'pos' || p.id === 'plus' || p.id === 'vcc_5v' || p.id === 'vcc_12v' || p.id === 'vcc_motor');
+    if (vccPins.length > 0) {
+      const isAnyVccConnected = vccPins.some(vccPin => {
+        const vccKey = pinKey({ componentId: comp.id, pinId: vccPin.id });
+        const net = Array.from(nets.values()).find(n => n.pins.some(ep => pinKey(ep) === vccKey));
+        return net && (net.pins.length > 1) && net.pins.some(ep => {
+          const otherComp = componentMap.get(ep.componentId);
+          if (!otherComp || ep.componentId === comp.id) return false;
+          const otherPin = resolvePinDefinition(otherComp, ep.pinId, boardId);
+          return otherPin && (otherPin.signalType === 'POWER_VCC' || otherPin.name === '3V3' || otherPin.name === 'VIN');
+        });
       });
 
-      if (!isConnectedToVcc) {
+      if (!isAnyVccConnected) {
         diagnostics.push({
           id: `erc_missing_vcc_${comp.id}`,
           severity: 'error',
           title: `Unpowered Component: ${comp.name}`,
-          message: `${comp.name} pin ${vccPin.name} is not connected to a valid positive voltage supply rail (3V3 or VIN).`,
+          message: `${comp.name} power supply pin is not connected to a valid positive voltage supply rail (3V3 or VIN).`,
           componentId: comp.id,
-          pinId: vccPin.id,
-          suggestion: `Connect ${comp.name} pin ${vccPin.name} to the ESP32 3V3 or VIN power pin.`,
+          suggestion: `Connect ${comp.name} power pin to the ESP32 3V3 or VIN power pin.`,
           blocksSimulation: true
         });
       }

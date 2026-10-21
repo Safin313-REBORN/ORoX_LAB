@@ -280,6 +280,281 @@ export const ComponentInspector: React.FC = () => {
               </button>
             </div>
           )}
+
+          {/* L298N DUAL MOTOR DRIVER CONTROLS */}
+          {selectedComp.type === 'l298n' && (
+            <div className="space-y-2.5">
+              <div className="flex justify-between items-center text-[11px] font-mono">
+                <span className="text-slate-400">Motor A Direction:</span>
+                <span className="text-emerald-400 font-bold">{selectedComp.state?.motorA_dir || 'STOP'}</span>
+              </div>
+              <div className="flex justify-between items-center text-[11px] font-mono">
+                <span className="text-slate-400">Motor B Direction:</span>
+                <span className="text-cyan-400 font-bold">{selectedComp.state?.motorB_dir || 'STOP'}</span>
+              </div>
+              <button
+                onClick={() => updateComponentProperty(selectedComp.id, 'jumper5vEnabled', !selectedComp.properties.jumper5vEnabled)}
+                className="w-full py-2 rounded-xl bg-[#162138] hover:bg-[#1e2c4a] text-slate-200 border border-white/10 text-xs font-semibold shadow-clay-btn transition-all"
+              >
+                {selectedComp.properties.jumper5vEnabled ? '✓ 5V Jumper Enabled (Regulator ON)' : '✗ 5V Jumper Removed (External 5V)'}
+              </button>
+            </div>
+          )}
+
+          {/* DC GEAR MOTOR CONTROLS */}
+          {selectedComp.type === 'dc-motor' && (
+            <div className="space-y-2.5 font-mono text-[11px]">
+              <div className="flex justify-between">
+                <span className="text-slate-400">Motor Status:</span>
+                <span className="text-amber-400 font-bold">{selectedComp.state?.direction || 'STOP'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Shaft RPM:</span>
+                <span className="text-white font-bold">{selectedComp.state?.rpm || 0} RPM</span>
+              </div>
+              <div className="space-y-1 font-sans">
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-400">Load Torque:</span>
+                  <span className="text-slate-200 font-mono">{selectedComp.properties.loadTorque || 0.2} kg·cm</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="1.5"
+                  step="0.05"
+                  value={selectedComp.properties.loadTorque || 0.2}
+                  onChange={(e) => updateComponentProperty(selectedComp.id, 'loadTorque', Number(e.target.value))}
+                  className="w-full accent-amber-400 bg-slate-800 rounded-lg cursor-pointer"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* STEPPER MOTOR CONTROLS */}
+          {selectedComp.type === 'stepper-motor' && (
+            <div className="space-y-2.5 font-mono text-[11px]">
+              <div className="flex justify-between">
+                <span className="text-slate-400">Rotor Position:</span>
+                <span className="text-emerald-400 font-bold">{Math.round(selectedComp.state?.angleDeg || 0)}°</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-400">Step Counter:</span>
+                <span className="text-white font-bold">{selectedComp.state?.stepPosition || 0} steps</span>
+              </div>
+              <button
+                onClick={() => {
+                  const newPos = (selectedComp.state?.stepPosition || 0) + 1;
+                  const newAngle = (newPos * 5.625 / 64) % 360;
+                  updateComponentState(selectedComp.id, 'stepPosition', newPos);
+                  updateComponentState(selectedComp.id, 'angleDeg', newAngle);
+                }}
+                className="w-full py-2 rounded-xl clay-btn-primary text-white text-xs font-bold shadow-clay-btn transition-all font-sans"
+              >
+                Manual Step Clockwise (+1)
+              </button>
+            </div>
+          )}
+
+          {/* IR LINE TRACKER CONTROLS */}
+          {selectedComp.type === 'ir-tracker' && (
+            <div className="space-y-2 font-sans">
+              <div className="text-[11px] text-slate-400 mb-1">Simulated Surface Type:</div>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => {
+                    updateComponentState(selectedComp.id, 'surfaceType', 'white');
+                    updateComponentState(selectedComp.id, 'outputState', 0);
+                  }}
+                  className={`py-2 rounded-xl text-xs font-bold transition-all ${
+                    selectedComp.state?.surfaceType === 'white' || !selectedComp.state?.surfaceType
+                      ? 'bg-slate-200 text-slate-900 shadow-clay-btn'
+                      : 'bg-[#141b2e] text-slate-400 border border-white/10'
+                  }`}
+                >
+                  ⬜ White Surface (DO=0)
+                </button>
+                <button
+                  onClick={() => {
+                    updateComponentState(selectedComp.id, 'surfaceType', 'black');
+                    updateComponentState(selectedComp.id, 'outputState', 1);
+                  }}
+                  className={`py-2 rounded-xl text-xs font-bold transition-all ${
+                    selectedComp.state?.surfaceType === 'black'
+                      ? 'bg-purple-600 text-white shadow-clay-btn'
+                      : 'bg-[#141b2e] text-slate-400 border border-white/10'
+                  }`}
+                >
+                  ⬛ Black Line (DO=1)
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* PIR MOTION SENSOR CONTROLS */}
+          {selectedComp.type === 'pir-sensor' && (
+            <div className="space-y-2">
+              <button
+                onMouseDown={() => {
+                  updateComponentState(selectedComp.id, 'motionDetected', true);
+                  updateComponentState(selectedComp.id, 'outputHigh', true);
+                }}
+                onMouseUp={() => {
+                  setTimeout(() => {
+                    updateComponentState(selectedComp.id, 'motionDetected', false);
+                    updateComponentState(selectedComp.id, 'outputHigh', false);
+                  }, 2000);
+                }}
+                className={`w-full py-3 rounded-2xl font-bold text-xs transition-all ${
+                  selectedComp.state?.motionDetected
+                    ? 'clay-btn-danger text-white shadow-clay-inner'
+                    : 'clay-btn-primary text-white shadow-clay-btn'
+                }`}
+              >
+                {selectedComp.state?.motionDetected ? '🚶 MOTION ACTIVE! (OUT=HIGH)' : '🚶 SIMULATE HUMAN MOTION'}
+              </button>
+            </div>
+          )}
+
+          {/* MQ-2 GAS SENSOR CONTROLS */}
+          {selectedComp.type === 'gas-sensor' && (
+            <div className="space-y-2 font-sans">
+              <div className="flex justify-between text-xs">
+                <span className="text-slate-400">Gas Concentration:</span>
+                <span className="text-amber-400 font-mono font-bold">{selectedComp.state?.ppm || 85} PPM</span>
+              </div>
+              <input
+                type="range"
+                min="20"
+                max="800"
+                step="10"
+                value={selectedComp.state?.ppm || 85}
+                onChange={(e) => {
+                  const ppm = Number(e.target.value);
+                  const voltage = Math.min(3.3, 0.4 + (ppm / 800) * 2.8);
+                  updateComponentState(selectedComp.id, 'ppm', ppm);
+                  updateComponentState(selectedComp.id, 'analogVoltage', Number(voltage.toFixed(2)));
+                  updateComponentState(selectedComp.id, 'alarmActive', ppm > (selectedComp.properties.thresholdPpm || 200));
+                }}
+                className="w-full accent-amber-400 bg-slate-800 rounded-lg cursor-pointer"
+              />
+              <div className="flex justify-between text-[11px] font-mono">
+                <span className="text-slate-400">Analog Voltage:</span>
+                <span className="text-white font-bold">{selectedComp.state?.analogVoltage || 0.55} V</span>
+              </div>
+            </div>
+          )}
+
+          {/* LDR LIGHT SENSOR CONTROLS */}
+          {selectedComp.type === 'photoresistor' && (
+            <div className="space-y-2 font-sans">
+              <div className="flex justify-between text-xs">
+                <span className="text-slate-400">Ambient Illumination:</span>
+                <span className="text-cyan-400 font-mono font-bold">{selectedComp.state?.lux || 450} Lux</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="1000"
+                step="25"
+                value={selectedComp.state?.lux || 450}
+                onChange={(e) => {
+                  const lux = Number(e.target.value);
+                  const voltage = Math.min(3.3, 3.3 * (1 - lux / 1000));
+                  updateComponentState(selectedComp.id, 'lux', lux);
+                  updateComponentState(selectedComp.id, 'analogVoltage', Number(voltage.toFixed(2)));
+                  updateComponentState(selectedComp.id, 'isDark', lux < (selectedComp.properties.thresholdLux || 300));
+                }}
+                className="w-full accent-cyan-400 bg-slate-800 rounded-lg cursor-pointer"
+              />
+              <div className="flex justify-between text-[11px] font-mono">
+                <span className="text-slate-400">Output Signal:</span>
+                <span className="text-white font-bold">{selectedComp.state?.isDark ? 'HIGH (Darkness)' : 'LOW (Bright)'}</span>
+              </div>
+            </div>
+          )}
+
+          {/* RELAY MODULE CONTROLS */}
+          {selectedComp.type === 'relay' && (
+            <div className="space-y-2">
+              <button
+                onClick={() => {
+                  const energized = !selectedComp.state?.energized;
+                  updateComponentState(selectedComp.id, 'energized', energized);
+                  updateComponentState(selectedComp.id, 'contactState', energized ? 'NO' : 'NC');
+                }}
+                className={`w-full py-3 rounded-2xl font-bold text-xs transition-all ${
+                  selectedComp.state?.energized
+                    ? 'clay-btn-success text-white shadow-clay-inner'
+                    : 'bg-[#18233a] hover:bg-[#202f4d] text-slate-200 border border-white/10 shadow-clay-btn'
+                }`}
+              >
+                {selectedComp.state?.energized ? '⚡ RELAY ENERGIZED [NO Connected]' : 'OFF: RELAY DE-ENERGIZED [NC Connected]'}
+              </button>
+            </div>
+          )}
+
+          {/* RGB LED CONTROLS */}
+          {selectedComp.type === 'rgb-led' && (
+            <div className="space-y-2.5 font-sans">
+              <div className="text-[11px] text-slate-400">Color Presets:</div>
+              <div className="flex flex-wrap gap-1.5">
+                {['#ef4444', '#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899', '#ffffff'].map((color) => (
+                  <button
+                    key={color}
+                    onClick={() => {
+                      updateComponentProperty(selectedComp.id, 'currentColor', color);
+                      updateComponentState(selectedComp.id, 'illuminated', true);
+                    }}
+                    className="w-6 h-6 rounded-full border-2 border-white/40 shadow-clay-pill hover:scale-110 transition-transform"
+                    style={{ backgroundColor: color }}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ROTARY ENCODER CONTROLS */}
+          {selectedComp.type === 'rotary-encoder' && (
+            <div className="space-y-2.5 font-sans">
+              <div className="flex justify-between text-[11px] font-mono">
+                <span className="text-slate-400">Encoder Position:</span>
+                <span className="text-cyan-400 font-bold">{selectedComp.state?.position || 0}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => {
+                    const pos = (selectedComp.state?.position || 0) - 1;
+                    updateComponentState(selectedComp.id, 'position', pos);
+                    updateComponentState(selectedComp.id, 'direction', 'CCW');
+                  }}
+                  className="py-2.5 rounded-xl bg-[#141d30] hover:bg-[#1a2640] text-slate-200 border border-white/10 text-xs font-bold shadow-clay-btn"
+                >
+                  ⟲ Turn Left (CCW)
+                </button>
+                <button
+                  onClick={() => {
+                    const pos = (selectedComp.state?.position || 0) + 1;
+                    updateComponentState(selectedComp.id, 'position', pos);
+                    updateComponentState(selectedComp.id, 'direction', 'CW');
+                  }}
+                  className="py-2.5 rounded-xl bg-[#141d30] hover:bg-[#1a2640] text-slate-200 border border-white/10 text-xs font-bold shadow-clay-btn"
+                >
+                  ⟳ Turn Right (CW)
+                </button>
+              </div>
+              <button
+                onMouseDown={() => updateComponentState(selectedComp.id, 'buttonPressed', true)}
+                onMouseUp={() => updateComponentState(selectedComp.id, 'buttonPressed', false)}
+                className={`w-full py-2 rounded-xl text-xs font-bold transition-all ${
+                  selectedComp.state?.buttonPressed
+                    ? 'clay-btn-danger text-white shadow-clay-inner'
+                    : 'bg-[#18233a] text-slate-300 border border-white/10 shadow-clay-btn'
+                }`}
+              >
+                {selectedComp.state?.buttonPressed ? 'SWITCH PRESSED (LOW)' : 'PRESS ENCODER SWITCH'}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Pinout Specifications Table */}

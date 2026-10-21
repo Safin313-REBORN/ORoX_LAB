@@ -649,8 +649,301 @@ export const CircuitCanvas: React.FC = () => {
                     <div className="w-1 h-full bg-amber-800 shadow-sm" />
                     <div className="w-1 h-full bg-amber-400 shadow-sm" />
                   </div>
-                  {/* Right lead wire */}
-                  <div className="w-3 h-[2px] bg-slate-300 shadow" />
+                </div>
+              ) : comp.type === 'l298n' ? (
+                /* ───────────────────────────────────────────────────────── */
+                /* 11. L298N DUAL H-BRIDGE MOTOR DRIVER                      */
+                /* ───────────────────────────────────────────────────────── */
+                <div className="w-[170px] h-[130px] clay-pcb bg-[#8b1515] border-2 border-red-500/40 rounded-2xl p-2 flex flex-col justify-between shadow-clay-card select-none relative overflow-hidden">
+                  {/* Top: Screw Terminal Out 1 & 2 / Out 3 & 4 */}
+                  <div className="flex items-center justify-between px-1">
+                    <div className="flex space-x-1">
+                      <div className="w-5 h-5 bg-blue-600 rounded border border-blue-400 flex items-center justify-center text-[7px] font-mono text-white font-bold shadow-inner">M1</div>
+                      <div className="w-5 h-5 bg-blue-600 rounded border border-blue-400 flex items-center justify-center text-[7px] font-mono text-white font-bold shadow-inner">M2</div>
+                    </div>
+                    <span className="text-[8px] font-mono font-bold text-amber-300">L298N DRIVER</span>
+                    <div className="flex space-x-1">
+                      <div className="w-5 h-5 bg-blue-600 rounded border border-blue-400 flex items-center justify-center text-[7px] font-mono text-white font-bold shadow-inner">M3</div>
+                      <div className="w-5 h-5 bg-blue-600 rounded border border-blue-400 flex items-center justify-center text-[7px] font-mono text-white font-bold shadow-inner">M4</div>
+                    </div>
+                  </div>
+
+                  {/* Center: Aluminum Finned Heatsink & L298 Multiwatt IC */}
+                  <div className="flex items-center justify-center">
+                    <div className="w-24 h-11 bg-gradient-to-r from-slate-400 via-slate-200 to-slate-400 rounded-md border border-slate-300 shadow-[inset_1px_1px_2px_rgba(255,255,255,0.8),inset_-1px_-1px_2px_rgba(0,0,0,0.4),2px_2px_6px_rgba(0,0,0,0.5)] flex flex-col items-center justify-center relative">
+                      {/* Fins */}
+                      <div className="w-full flex justify-around px-1">
+                        <div className="w-1 h-8 bg-slate-500 rounded-sm" />
+                        <div className="w-1 h-8 bg-slate-500 rounded-sm" />
+                        <div className="w-1 h-8 bg-slate-500 rounded-sm" />
+                        <div className="w-1 h-8 bg-slate-500 rounded-sm" />
+                        <div className="w-1 h-8 bg-slate-500 rounded-sm" />
+                      </div>
+                      <span className="text-[6.5px] font-mono font-extrabold text-slate-800 tracking-wider absolute bottom-1">
+                        ST L298N
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Middle Left: Power Terminal Block (12V, GND, 5V) */}
+                  <div className="absolute left-1 top-10 flex flex-col space-y-1">
+                    <div className="w-4 h-4 bg-blue-600 rounded border border-blue-400 flex items-center justify-center text-[6px] font-mono text-white font-bold shadow-inner">12</div>
+                    <div className="w-4 h-4 bg-blue-600 rounded border border-blue-400 flex items-center justify-center text-[6px] font-mono text-white font-bold shadow-inner">G</div>
+                    <div className="w-4 h-4 bg-blue-600 rounded border border-blue-400 flex items-center justify-center text-[6px] font-mono text-white font-bold shadow-inner">5V</div>
+                  </div>
+
+                  {/* Bottom: Silkscreen for Logic Pins */}
+                  <div className="flex items-center justify-between px-2 text-[7px] font-mono font-bold text-amber-200/90 pt-1">
+                    <span>ENA</span>
+                    <span>IN1</span>
+                    <span>IN2</span>
+                    <span className="text-rose-400">● 5V</span>
+                    <span>IN3</span>
+                    <span>IN4</span>
+                    <span>ENB</span>
+                  </div>
+                </div>
+              ) : comp.type === 'dc-motor' ? (
+                /* ───────────────────────────────────────────────────────── */
+                /* 12. TT DC GEAR MOTOR WITH ROTATING WHEEL                  */
+                /* ───────────────────────────────────────────────────────── */
+                <div className="w-[140px] h-[100px] flex items-center justify-between select-none relative">
+                  {/* Left: Robotic Wheel with Rubber Tire */}
+                  <div className="w-[84px] h-[84px] rounded-full bg-[#12161f] border-4 border-slate-700 shadow-clay-card flex items-center justify-center relative overflow-hidden">
+                    {/* Rubber Tread Marks */}
+                    <div className="absolute inset-0 border-2 border-dashed border-slate-500 rounded-full opacity-60" />
+                    {/* Yellow Rim */}
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 border-2 border-amber-600 flex items-center justify-center shadow-inner">
+                      {/* Center Nut & Spokes */}
+                      <div className="w-4 h-4 rounded-full bg-slate-800 border border-slate-600 flex items-center justify-center">
+                        <div className="w-1.5 h-1.5 bg-slate-300 rounded-sm" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right: Yellow Gearbox Motor Body */}
+                  <div className="w-[50px] h-[74px] bg-gradient-to-r from-amber-400 to-amber-500 rounded-r-2xl border-2 border-amber-600 shadow-md p-1.5 flex flex-col justify-between">
+                    <span className="text-[7px] font-mono font-extrabold text-amber-950 uppercase tracking-tighter">
+                      TT 1:48
+                    </span>
+                    <div className="w-8 h-4 bg-slate-300 rounded border border-slate-400 mx-auto shadow-inner flex items-center justify-center text-[5px] font-mono text-slate-700">
+                      DC 3-6V
+                    </div>
+                    <div className="flex flex-col space-y-1 items-end text-[7px] font-mono font-bold text-amber-950">
+                      <span>M+</span>
+                      <span>M-</span>
+                    </div>
+                  </div>
+                </div>
+              ) : comp.type === 'stepper-motor' ? (
+                /* ───────────────────────────────────────────────────────── */
+                /* 13. 28BYJ-48 STEPPER MOTOR + ULN2003 DRIVER               */
+                /* ───────────────────────────────────────────────────────── */
+                <div className="w-[160px] h-[110px] clay-panel bg-[#0d2618] border-2 border-emerald-600/40 rounded-2xl p-2 flex items-center justify-between shadow-clay-card select-none">
+                  {/* Left: Blue Stepper Motor Casing */}
+                  <div className="w-[72px] h-[72px] rounded-full bg-gradient-to-br from-blue-500 via-blue-600 to-blue-800 border-2 border-blue-400 shadow-inner flex items-center justify-center relative">
+                    {/* Brass D-shaft */}
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-200 to-amber-500 border border-amber-600 flex items-center justify-center shadow-md">
+                      <div className="w-2.5 h-1 bg-amber-800 rounded-sm" />
+                    </div>
+                    <span className="absolute bottom-1 text-[6px] font-mono font-bold text-blue-100">28BYJ-48</span>
+                  </div>
+
+                  {/* Right: ULN2003 Driver Board */}
+                  <div className="w-[70px] h-[92px] bg-[#0a1f13] border border-emerald-500/50 rounded-xl p-1.5 flex flex-col justify-between">
+                    <span className="text-[7px] font-mono font-bold text-emerald-400 text-center">ULN2003</span>
+                    {/* 4 Coil LEDs */}
+                    <div className="flex justify-around px-1">
+                      <span className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_6px_#f43f5e]" title="Coil A" />
+                      <span className="w-2 h-2 rounded-full bg-rose-950" title="Coil B" />
+                      <span className="w-2 h-2 rounded-full bg-rose-950" title="Coil C" />
+                      <span className="w-2 h-2 rounded-full bg-rose-950" title="Coil D" />
+                    </div>
+                    <div className="w-12 h-4 bg-slate-900 border border-slate-700 rounded mx-auto flex items-center justify-center text-[5.5px] font-mono text-slate-400">
+                      ULN2003A
+                    </div>
+                    <div className="flex justify-between text-[6.5px] font-mono font-bold text-emerald-300 px-0.5">
+                      <span>IN1-4</span>
+                      <span>5V</span>
+                    </div>
+                  </div>
+                </div>
+              ) : comp.type === 'ir-tracker' ? (
+                /* ───────────────────────────────────────────────────────── */
+                /* 14. TCRT5000 IR LINE TRACKING SENSOR                      */
+                /* ───────────────────────────────────────────────────────── */
+                <div className="w-[110px] h-[75px] clay-panel bg-[#0d2238] border-2 border-sky-600/40 rounded-2xl p-2 flex flex-col justify-between shadow-clay-card select-none">
+                  {/* Top: Dual IR Optical Sensor Tubes */}
+                  <div className="flex items-center justify-center space-x-3 pt-1">
+                    <div className="w-4 h-4 rounded-full bg-purple-950 border border-purple-600/80 shadow-[0_0_8px_rgba(168,85,247,0.5)] flex items-center justify-center" title="IR LED Emitter">
+                      <div className="w-1.5 h-1.5 rounded-full bg-purple-500" />
+                    </div>
+                    <div className="w-4 h-4 rounded-full bg-slate-900 border border-sky-400 shadow-inner flex items-center justify-center" title="Phototransistor Receiver">
+                      <div className="w-1.5 h-1.5 rounded-full bg-sky-400/80" />
+                    </div>
+                  </div>
+
+                  <div className="text-[7.5px] font-mono font-bold text-sky-300 text-center">
+                    TCRT5000 TRACKER
+                  </div>
+
+                  {/* Bottom: Silkscreen labels */}
+                  <div className="flex items-center justify-between px-1 text-[7px] font-mono font-bold text-sky-400">
+                    <span>VCC</span>
+                    <span>GND</span>
+                    <span>DO</span>
+                    <span>AO</span>
+                  </div>
+                </div>
+              ) : comp.type === 'pir-sensor' ? (
+                /* ───────────────────────────────────────────────────────── */
+                /* 15. HC-SR501 PIR MOTION SENSOR                            */
+                /* ───────────────────────────────────────────────────────── */
+                <div className="w-[120px] h-[90px] clay-panel bg-[#0c2419] border-2 border-emerald-600/40 rounded-2xl p-2 flex flex-col items-center justify-between shadow-clay-card select-none">
+                  {/* Center: Hemispherical Translucent Fresnel Lens */}
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-white/95 via-slate-200/90 to-slate-400/90 border border-white/60 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.9),2px_3px_8px_rgba(0,0,0,0.4)] flex items-center justify-center relative overflow-hidden">
+                    {/* Facet grid pattern */}
+                    <div className="absolute inset-0 border border-slate-400/40 rounded-full" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-slate-400/40" />
+                  </div>
+
+                  <span className="text-[7.5px] font-mono font-bold text-emerald-300">
+                    HC-SR501 PIR
+                  </span>
+
+                  {/* Bottom: Silkscreen */}
+                  <div className="w-full flex items-center justify-around text-[7.5px] font-mono font-bold text-emerald-400 px-2">
+                    <span>VCC</span>
+                    <span className="text-amber-400">OUT</span>
+                    <span>GND</span>
+                  </div>
+                </div>
+              ) : comp.type === 'gas-sensor' ? (
+                /* ───────────────────────────────────────────────────────── */
+                /* 16. MQ-2 FLAMMABLE GAS & SMOKE SENSOR                     */
+                /* ───────────────────────────────────────────────────────── */
+                <div className="w-[120px] h-[85px] clay-panel bg-[#0e1d33] border-2 border-blue-600/40 rounded-2xl p-2 flex flex-col items-center justify-between shadow-clay-card select-none">
+                  {/* Circular Stainless Steel Mesh Sensor Dome */}
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-slate-200 via-slate-400 to-slate-600 border-2 border-slate-300 shadow-[inset_1px_1px_3px_rgba(255,255,255,0.8),2px_2px_6px_rgba(0,0,0,0.5)] flex items-center justify-center relative">
+                    <div className="w-8 h-8 rounded-full border border-dashed border-slate-700/60 flex items-center justify-center">
+                      <span className="text-[6.5px] font-mono font-bold text-slate-800">MQ-2</span>
+                    </div>
+                  </div>
+
+                  <span className="text-[7.5px] font-mono font-bold text-blue-300">
+                    GAS & SMOKE
+                  </span>
+
+                  {/* Bottom: Silkscreen */}
+                  <div className="w-full flex items-center justify-between px-2 text-[7.5px] font-mono font-bold text-blue-400">
+                    <span>VCC</span>
+                    <span>GND</span>
+                    <span>DO</span>
+                    <span>AO</span>
+                  </div>
+                </div>
+              ) : comp.type === 'photoresistor' ? (
+                /* ───────────────────────────────────────────────────────── */
+                /* 17. LDR LIGHT SENSOR MODULE                               */
+                /* ───────────────────────────────────────────────────────── */
+                <div className="w-[110px] h-[75px] clay-panel bg-[#0e2133] border-2 border-cyan-600/40 rounded-2xl p-2 flex flex-col justify-between shadow-clay-card select-none">
+                  {/* Top: Cadmium-Sulfide Photoresistor Disk */}
+                  <div className="flex items-center justify-center pt-1">
+                    <div className="w-7 h-5 rounded-md bg-[#c2410c] border border-amber-600 shadow-inner flex items-center justify-center">
+                      <svg className="w-5 h-3" viewBox="0 0 20 12">
+                        <path d="M 2 6 Q 6 1, 10 6 T 18 6" fill="none" stroke="#fed7aa" strokeWidth="1.5" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  <span className="text-[7.5px] font-mono font-bold text-cyan-300 text-center">
+                    LDR LIGHT
+                  </span>
+
+                  {/* Bottom: Silkscreen */}
+                  <div className="flex items-center justify-between px-1 text-[7px] font-mono font-bold text-cyan-400">
+                    <span>VCC</span>
+                    <span>GND</span>
+                    <span>DO</span>
+                    <span>AO</span>
+                  </div>
+                </div>
+              ) : comp.type === 'relay' ? (
+                /* ───────────────────────────────────────────────────────── */
+                /* 18. 1-CHANNEL 5V OPTOCOUPLED RELAY                        */
+                /* ───────────────────────────────────────────────────────── */
+                <div className="w-[130px] h-[90px] clay-panel bg-[#0d1c33] border-2 border-blue-600/40 rounded-2xl p-2 flex items-center justify-between shadow-clay-card select-none">
+                  {/* Left: Input Header & Optocoupler */}
+                  <div className="flex flex-col justify-between h-full py-1 text-[7px] font-mono font-bold text-cyan-400">
+                    <span>VCC</span>
+                    <span>IN</span>
+                    <span>GND</span>
+                  </div>
+
+                  {/* Center: Blue Songle Cube */}
+                  <div className="w-[62px] h-[68px] bg-blue-600 rounded-lg border border-blue-400 shadow-md p-1 flex flex-col justify-between text-[6px] font-mono text-white leading-tight">
+                    <span className="font-extrabold text-[7px] text-amber-300">SONGLE</span>
+                    <span>SRD-05VDC</span>
+                    <span>10A 250VAC</span>
+                    <span className="text-[5.5px] text-blue-200">10A 30VDC</span>
+                  </div>
+
+                  {/* Right: Terminal Block (NO, COM, NC) */}
+                  <div className="flex flex-col justify-between h-full py-1 text-[7px] font-mono font-bold text-slate-300">
+                    <span>NO</span>
+                    <span>COM</span>
+                    <span>NC</span>
+                  </div>
+                </div>
+              ) : comp.type === 'rgb-led' ? (
+                /* ───────────────────────────────────────────────────────── */
+                /* 19. 5mm 4-PIN RGB LED WITH MULTI-COLOR EMISSION           */
+                /* ───────────────────────────────────────────────────────── */
+                <div className="w-[70px] h-[80px] flex flex-col items-center justify-between select-none">
+                  {/* 3D Frosted Dome */}
+                  <div
+                    className="w-9 h-11 rounded-t-full rounded-b-md transition-all duration-150 relative border border-white/40 shadow-clay-card bg-slate-200/90"
+                    style={{
+                      boxShadow: comp.state?.illuminated
+                        ? `0 0 30px 8px ${comp.properties?.currentColor || '#ff00ff'}, inset 0 0 10px rgba(255,255,255,0.8)`
+                        : 'inset 0 0 4px rgba(0,0,0,0.2)'
+                    }}
+                  >
+                    <div className="w-2 h-4 rounded-full bg-white/60 absolute top-2 left-2 blur-[0.5px]" />
+                  </div>
+
+                  {/* 4 Metallic Leads */}
+                  <div className="w-12 flex justify-between">
+                    <div className="w-0.5 h-4 bg-slate-300" />
+                    <div className="w-0.5 h-5 bg-slate-300" />
+                    <div className="w-0.5 h-4 bg-slate-300" />
+                    <div className="w-0.5 h-4 bg-slate-300" />
+                  </div>
+                </div>
+              ) : comp.type === 'rotary-encoder' ? (
+                /* ───────────────────────────────────────────────────────── */
+                /* 20. KY-040 ROTARY ENCODER MODULE                          */
+                /* ───────────────────────────────────────────────────────── */
+                <div className="w-[110px] h-[85px] clay-panel bg-[#121c2d] border-2 border-slate-600/40 rounded-2xl p-2 flex flex-col items-center justify-between shadow-clay-card select-none">
+                  {/* Center: Knurled Metallic Silver Potentiometer Knob */}
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-slate-200 via-slate-400 to-slate-600 border border-slate-300 shadow-clay-btn flex items-center justify-center relative">
+                    {/* Position Notch */}
+                    <div className="w-1.5 h-3 bg-cyan-400 rounded-full absolute top-1 shadow-[0_0_6px_#38bdf8]" />
+                    <div className="w-4 h-4 rounded-full bg-slate-700 border border-slate-500 shadow-inner" />
+                  </div>
+
+                  <span className="text-[7.5px] font-mono font-bold text-slate-300">
+                    KY-040 ENCODER
+                  </span>
+
+                  {/* Bottom: Silkscreen */}
+                  <div className="w-full flex items-center justify-between px-1 text-[7px] font-mono font-bold text-cyan-400">
+                    <span>CLK</span>
+                    <span>DT</span>
+                    <span>SW</span>
+                    <span>+</span>
+                    <span>GND</span>
+                  </div>
                 </div>
               ) : null}
 

@@ -3,13 +3,15 @@ import { useRoboLabStore } from '../../store/useRoboLabStore';
 import { COMPONENT_CATALOG } from '../../simulation/models/componentRegistry';
 import { 
   Search, Plus, Cpu, Tv, Compass, ToggleLeft, Volume2, 
-  BatteryCharging, Zap, Sparkles, Box, X 
+  BatteryCharging, Zap, Sparkles, Box, X, Bot, Cog 
 } from 'lucide-react';
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   all: <Sparkles className="w-3.5 h-3.5 text-amber-400" />,
-  displays: <Tv className="w-3.5 h-3.5 text-blue-400" />,
+  robotics: <Bot className="w-3.5 h-3.5 text-orange-400" />,
+  actuators: <Cog className="w-3.5 h-3.5 text-yellow-400" />,
   sensors: <Compass className="w-3.5 h-3.5 text-sky-400" />,
+  displays: <Tv className="w-3.5 h-3.5 text-blue-400" />,
   inputs: <ToggleLeft className="w-3.5 h-3.5 text-emerald-400" />,
   audio: <Volume2 className="w-3.5 h-3.5 text-purple-400" />,
   power: <BatteryCharging className="w-3.5 h-3.5 text-teal-400" />,
@@ -23,10 +25,11 @@ export const ComponentLibrary: React.FC = () => {
 
   const categories = [
     { id: 'all', label: 'All Parts' },
-    { id: 'displays', label: 'Displays' },
+    { id: 'robotics', label: 'Robotics' },
+    { id: 'actuators', label: 'Motors' },
     { id: 'sensors', label: 'Sensors' },
+    { id: 'displays', label: 'Displays' },
     { id: 'inputs', label: 'Inputs' },
-    { id: 'audio', label: 'Audio' },
     { id: 'power', label: 'Power' },
     { id: 'discretes', label: 'Passives' },
   ];

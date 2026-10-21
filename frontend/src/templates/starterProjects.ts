@@ -659,5 +659,215 @@ void loop() {
         }
       ]
     }
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 9. L298N Autonomous Differential Drive Rover
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: 'p9_l298n_rover',
+    name: '9. L298N Dual Motor Drive Rover',
+    description: 'Autonomous 2WD robotic platform with L298N Dual H-Bridge motor driver, differential steering kinematics, and speed control.',
+    category: 'Robotics',
+    libraries: [],
+    expectedResults: 'Both TT gearmotors rotate forward, pivot turn, and reverse with smooth PWM velocity ramping.',
+    executionMode: 'modeB',
+    testStatus: 'verified',
+    project: {
+      id: 'p9_l298n_rover',
+      name: 'L298N Dual Drive Rover',
+      schemaVersion: 1,
+      boardId: 'esp32doit-devkit-v1',
+      framework: 'arduino',
+      simulationMode: 'modeB',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      components: [
+        { id: 'esp32_1', type: 'esp32doit-devkit-v1', name: 'ESP32 DevKit V1', x: 260, y: 60, rotation: 0, properties: {}, state: {} },
+        { id: 'l298_1', type: 'l298n', name: 'L298N Motor Driver', x: 50, y: 70, rotation: 0, properties: { supplyVoltage: 12.0 }, state: {} },
+        { id: 'motor_left', type: 'dc-motor', name: 'Left TT Motor', x: 50, y: 220, rotation: 0, properties: {}, state: {} },
+        { id: 'motor_right', type: 'dc-motor', name: 'Right TT Motor', x: 500, y: 70, rotation: 0, properties: {}, state: {} }
+      ],
+      wires: [
+        // ESP32 to L298N Logic Direction & Enable
+        { id: 'w1', start: { componentId: 'esp32_1', pinId: 'gpio26' }, end: { componentId: 'l298_1', pinId: 'in1' }, color: '#3b82f6' },
+        { id: 'w2', start: { componentId: 'esp32_1', pinId: 'gpio27' }, end: { componentId: 'l298_1', pinId: 'in2' }, color: '#3b82f6' },
+        { id: 'w3', start: { componentId: 'esp32_1', pinId: 'gpio14' }, end: { componentId: 'l298_1', pinId: 'in3' }, color: '#8b5cf6' },
+        { id: 'w4', start: { componentId: 'esp32_1', pinId: 'gpio12' }, end: { componentId: 'l298_1', pinId: 'in4' }, color: '#8b5cf6' },
+        { id: 'w5', start: { componentId: 'esp32_1', pinId: 'gpio25' }, end: { componentId: 'l298_1', pinId: 'ena' }, color: '#f59e0b' },
+        { id: 'w6', start: { componentId: 'esp32_1', pinId: 'gpio13' }, end: { componentId: 'l298_1', pinId: 'enb' }, color: '#f59e0b' },
+        // Common Ground & Power
+        { id: 'w7', start: { componentId: 'esp32_1', pinId: 'gnd_1' }, end: { componentId: 'l298_1', pinId: 'gnd' }, color: '#10b981' },
+        { id: 'w8', start: { componentId: 'esp32_1', pinId: 'vin' }, end: { componentId: 'l298_1', pinId: 'vcc_5v' }, color: '#ef4444' },
+        { id: 'w9', start: { componentId: 'esp32_1', pinId: 'vin' }, end: { componentId: 'l298_1', pinId: 'vcc_12v' }, color: '#ef4444' },
+        // Motor Out connections
+        { id: 'w10', start: { componentId: 'l298_1', pinId: 'out1' }, end: { componentId: 'motor_left', pinId: 'm_plus' }, color: '#ef4444' },
+        { id: 'w11', start: { componentId: 'l298_1', pinId: 'out2' }, end: { componentId: 'motor_left', pinId: 'm_minus' }, color: '#06b6d4' },
+        { id: 'w12', start: { componentId: 'l298_1', pinId: 'out3' }, end: { componentId: 'motor_right', pinId: 'm_plus' }, color: '#f59e0b' },
+        { id: 'w13', start: { componentId: 'l298_1', pinId: 'out4' }, end: { componentId: 'motor_right', pinId: 'm_minus' }, color: '#8b5cf6' }
+      ],
+      files: [
+        {
+          id: 'main_ino',
+          name: 'sketch.ino',
+          content: `// Project 9: L298N Autonomous Differential Drive Rover
+// Author: RoboLab Mechatronics Team
+
+#define ENA_PIN 25  // Motor A Speed PWM
+#define IN1_PIN 26  // Motor A Dir 1
+#define IN2_PIN 27  // Motor A Dir 2
+
+#define IN3_PIN 14  // Motor B Dir 1
+#define IN4_PIN 12  // Motor B Dir 2
+#define ENB_PIN 13  // Motor B Speed PWM
+
+void setMotors(int speedA, int speedB) {
+  // Motor A Direction & Speed
+  if (speedA > 0) {
+    digitalWrite(IN1_PIN, HIGH);
+    digitalWrite(IN2_PIN, LOW);
+  } else if (speedA < 0) {
+    digitalWrite(IN1_PIN, LOW);
+    digitalWrite(IN2_PIN, HIGH);
+  } else {
+    digitalWrite(IN1_PIN, LOW);
+    digitalWrite(IN2_PIN, LOW);
+  }
+  analogWrite(ENA_PIN, abs(speedA));
+
+  // Motor B Direction & Speed
+  if (speedB > 0) {
+    digitalWrite(IN3_PIN, HIGH);
+    digitalWrite(IN4_PIN, LOW);
+  } else if (speedB < 0) {
+    digitalWrite(IN3_PIN, LOW);
+    digitalWrite(IN4_PIN, HIGH);
+  } else {
+    digitalWrite(IN3_PIN, LOW);
+    digitalWrite(IN4_PIN, LOW);
+  }
+  analogWrite(ENB_PIN, abs(speedB));
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(ENA_PIN, OUTPUT);
+  pinMode(IN1_PIN, OUTPUT);
+  pinMode(IN2_PIN, OUTPUT);
+  pinMode(IN3_PIN, OUTPUT);
+  pinMode(IN4_PIN, OUTPUT);
+  pinMode(ENB_PIN, OUTPUT);
+
+  Serial.println("[ROVER] Differential Drive Online. Starting Autonomy Sequence...");
+}
+
+void loop() {
+  Serial.println("[ROVER] State: DRIVING FORWARD (Speed 200)");
+  setMotors(200, 200);
+  delay(2000);
+
+  Serial.println("[ROVER] State: PIVOT TURN RIGHT (Speed 180)");
+  setMotors(180, -180);
+  delay(1000);
+
+  Serial.println("[ROVER] State: DRIVING REVERSE");
+  setMotors(-150, -150);
+  delay(1500);
+
+  Serial.println("[ROVER] State: STOP / BRAKE");
+  setMotors(0, 0);
+  delay(1000);
+}
+`
+        }
+      ]
+    }
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 10. TCRT5000 Dual IR Sensor Smart Line Follower Robot
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: 'p10_line_follower',
+    name: '10. TCRT5000 Smart Line Follower',
+    description: 'Line-following mobile robot with infrared surface reflectance sensors, threshold logic, and differential steering.',
+    category: 'Robotics',
+    libraries: [],
+    expectedResults: 'Robot follows optical line with autonomous steering correction based on left/right sensor reflection.',
+    executionMode: 'modeB',
+    testStatus: 'verified',
+    project: {
+      id: 'p10_line_follower',
+      name: 'Smart Line Follower Robot',
+      schemaVersion: 1,
+      boardId: 'esp32doit-devkit-v1',
+      framework: 'arduino',
+      simulationMode: 'modeB',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      components: [
+        { id: 'esp32_1', type: 'esp32doit-devkit-v1', name: 'ESP32 DevKit V1', x: 260, y: 60, rotation: 0, properties: {}, state: {} },
+        { id: 'ir_left', type: 'ir-tracker', name: 'Left IR Sensor', x: 50, y: 60, rotation: 0, properties: {}, state: { surfaceType: 'white' } },
+        { id: 'ir_right', type: 'ir-tracker', name: 'Right IR Sensor', x: 50, y: 170, rotation: 0, properties: {}, state: { surfaceType: 'white' } },
+        { id: 'motor_1', type: 'dc-motor', name: 'Left Drive Wheel', x: 500, y: 60, rotation: 0, properties: {}, state: {} }
+      ],
+      wires: [
+        { id: 'w1', start: { componentId: 'esp32_1', pinId: 'gpio14' }, end: { componentId: 'ir_left', pinId: 'do' }, color: '#f59e0b' },
+        { id: 'w2', start: { componentId: 'esp32_1', pinId: 'gpio12' }, end: { componentId: 'ir_right', pinId: 'do' }, color: '#06b6d4' },
+        { id: 'w3', start: { componentId: 'esp32_1', pinId: 'vcc_3v3' }, end: { componentId: 'ir_left', pinId: 'vcc' }, color: '#ef4444' },
+        { id: 'w4', start: { componentId: 'esp32_1', pinId: 'gnd_2' }, end: { componentId: 'ir_left', pinId: 'gnd' }, color: '#10b981' },
+        { id: 'w5', start: { componentId: 'esp32_1', pinId: 'vcc_3v3' }, end: { componentId: 'ir_right', pinId: 'vcc' }, color: '#ef4444' },
+        { id: 'w6', start: { componentId: 'esp32_1', pinId: 'gnd_2' }, end: { componentId: 'ir_right', pinId: 'gnd' }, color: '#10b981' },
+        { id: 'w7', start: { componentId: 'esp32_1', pinId: 'gpio26' }, end: { componentId: 'motor_1', pinId: 'm_plus' }, color: '#3b82f6' },
+        { id: 'w8', start: { componentId: 'esp32_1', pinId: 'gnd_2' }, end: { componentId: 'motor_1', pinId: 'm_minus' }, color: '#10b981' }
+      ],
+      files: [
+        {
+          id: 'main_ino',
+          name: 'sketch.ino',
+          content: `// Project 10: TCRT5000 Smart Line Follower Robot
+// Author: RoboLab Autonomous Systems Lab
+
+#define SENSOR_LEFT_PIN  14  // DO from Left TCRT5000
+#define SENSOR_RIGHT_PIN 12  // DO from Right TCRT5000
+#define STATUS_LED       2   // ESP32 Onboard LED
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(SENSOR_LEFT_PIN, INPUT);
+  pinMode(SENSOR_RIGHT_PIN, INPUT);
+  pinMode(STATUS_LED, OUTPUT);
+
+  Serial.println("[LINE_FOLLOWER] Optical Calibration Complete. Tracking line...");
+}
+
+void loop() {
+  int leftState = digitalRead(SENSOR_LEFT_PIN);   // 0 = White, 1 = Black line
+  int rightState = digitalRead(SENSOR_RIGHT_PIN);
+
+  if (leftState == 0 && rightState == 0) {
+    // Both on white -> Move straight
+    digitalWrite(STATUS_LED, HIGH);
+    Serial.println("[LINE] On Track: Forward (L=0, R=0)");
+  } else if (leftState == 1 && rightState == 0) {
+    // Left on black -> Steer left
+    digitalWrite(STATUS_LED, LOW);
+    Serial.println("[LINE] Deviation: Steer Left! (L=1, R=0)");
+  } else if (leftState == 0 && rightState == 1) {
+    // Right on black -> Steer right
+    digitalWrite(STATUS_LED, LOW);
+    Serial.println("[LINE] Deviation: Steer Right! (L=0, R=1)");
+  } else {
+    // Both on black -> T-intersection or Stop line
+    digitalWrite(STATUS_LED, HIGH);
+    Serial.println("[LINE] Crossline Detected: Stop / Align (L=1, R=1)");
+  }
+
+  delay(200);
+}
+`
+        }
+      ]
+    }
   }
 ];

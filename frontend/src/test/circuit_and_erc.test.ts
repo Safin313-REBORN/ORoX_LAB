@@ -154,4 +154,17 @@ describe('Electrical Validation Engine (ERC)', () => {
     const hasErrors = diagnostics.some(d => d.severity === 'error');
     expect(hasErrors).toBe(false);
   });
+
+  it('validates ERC on all starter projects', () => {
+    for (const starter of STARTER_PROJECTS) {
+      const p = starter.project;
+      const diags = runElectricalRuleCheck(p.components, p.wires, p.boardId);
+      const errors = diags.filter(d => d.severity === 'error');
+      if (errors.length > 0) {
+        console.log(`Starter Project "${starter.name}" has ERC errors:`, errors.map(e => e.message));
+      }
+      expect(errors.length).toBe(0);
+    }
+  });
 });
+

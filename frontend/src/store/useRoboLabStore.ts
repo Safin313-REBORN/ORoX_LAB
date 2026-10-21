@@ -13,7 +13,7 @@ export interface RoboLabStore {
   activeFileId: string;
   selectedComponentId: string | null;
   selectedWireId: string | null;
-  activeTab: 'editor' | 'serial' | 'compiler' | 'instruments' | 'erc';
+  activeTab: 'editor' | 'serial' | 'compiler' | 'instruments' | 'erc' | 'formulas';
   zoom: number;
   pan: { x: number; y: number };
 
@@ -29,6 +29,7 @@ export interface RoboLabStore {
   isLibraryOpen: boolean;
   isInspectorOpen: boolean;
   isBottomOpen: boolean;
+  isFormulasOpen: boolean;
 
   // Undo / Redo history
   history: RoboLabProject[];
@@ -38,15 +39,17 @@ export interface RoboLabStore {
   setBoard: (boardId: string) => void;
   setFramework: (framework: 'arduino' | 'espidf') => void;
   setSimulationMode: (mode: 'modeA' | 'modeB' | 'modeC') => void;
-  setActiveTab: (tab: 'editor' | 'serial' | 'compiler' | 'instruments' | 'erc') => void;
+  setActiveTab: (tab: 'editor' | 'serial' | 'compiler' | 'instruments' | 'erc' | 'formulas') => void;
   setZoom: (zoom: number) => void;
   setPan: (pan: { x: number; y: number }) => void;
   toggleLibrary: () => void;
   toggleInspector: () => void;
   toggleBottom: () => void;
+  toggleFormulas: () => void;
   setLibraryOpen: (open: boolean) => void;
   setInspectorOpen: (open: boolean) => void;
   setBottomOpen: (open: boolean) => void;
+  setFormulasOpen: (open: boolean) => void;
 
   // Canvas Actions
   addComponent: (type: string, x: number, y: number) => void;
@@ -130,13 +133,16 @@ export const useRoboLabStore = create<RoboLabStore>((set, get) => {
     isLibraryOpen: false,
     isInspectorOpen: false,
     isBottomOpen: false,
+    isFormulasOpen: false,
 
     toggleLibrary: () => set({ isLibraryOpen: !get().isLibraryOpen }),
     toggleInspector: () => set({ isInspectorOpen: !get().isInspectorOpen }),
     toggleBottom: () => set({ isBottomOpen: !get().isBottomOpen }),
+    toggleFormulas: () => set({ isFormulasOpen: !get().isFormulasOpen }),
     setLibraryOpen: (open) => set({ isLibraryOpen: open }),
     setInspectorOpen: (open) => set({ isInspectorOpen: open }),
     setBottomOpen: (open) => set({ isBottomOpen: open }),
+    setFormulasOpen: (open) => set({ isFormulasOpen: open }),
 
     setBoard: (boardId: string) => {
       const p = { ...get().project, boardId };

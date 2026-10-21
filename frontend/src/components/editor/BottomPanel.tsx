@@ -4,8 +4,9 @@ import { useRoboLabStore } from '../../store/useRoboLabStore';
 import { 
   Terminal, Code2, Activity, ShieldAlert, Cpu, 
   Trash2, Send, Plus, ChevronUp, ChevronDown, CheckCircle, AlertTriangle, XCircle,
-  Download, ArrowRight
+  Download, ArrowRight, Calculator 
 } from 'lucide-react';
+import { RoboticsFormulasStudio } from '../robotics/RoboticsFormulasStudio';
 
 export const BottomPanel: React.FC = () => {
   const {
@@ -176,7 +177,7 @@ export const BottomPanel: React.FC = () => {
   };
 
   return (
-    <div className={`border-t border-white/[0.08] bg-[#0b101d] flex flex-col transition-all select-none shadow-[-4px_0_20px_rgba(0,0,0,0.5)] ${!isBottomOpen ? 'h-11' : 'h-72'}`}>
+    <div className={`border-t border-white/[0.08] bg-[#0b101d] flex flex-col transition-all select-none shadow-[-4px_0_20px_rgba(0,0,0,0.5)] ${!isBottomOpen ? 'h-11' : activeTab === 'formulas' ? 'h-[440px]' : 'h-72'}`}>
       {/* Tab Navigation Header */}
       <div className="h-11 bg-[#0e1424] border-b border-white/[0.06] flex items-center justify-between px-3">
         <div className="flex items-center space-x-1.5 overflow-x-auto custom-scrollbar py-1">
@@ -249,6 +250,18 @@ export const BottomPanel: React.FC = () => {
             {diagnostics.some(d => d.severity === 'error') && (
               <span className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_#f43f5e]" />
             )}
+          </button>
+
+          <button
+            onClick={() => { setActiveTab('formulas'); setBottomOpen(true); }}
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 ${
+              activeTab === 'formulas' && isBottomOpen
+                ? 'clay-btn-primary text-white shadow-clay-btn'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
+            }`}
+          >
+            <Calculator className="w-3.5 h-3.5 text-amber-400" />
+            <span>Robotics Laws & Math</span>
           </button>
         </div>
 
@@ -541,6 +554,11 @@ export const BottomPanel: React.FC = () => {
                 </div>
               ))}
             </div>
+          )}
+
+          {/* TAB 6: ROBOTICS FORMULAS STUDIO */}
+          {activeTab === 'formulas' && (
+            <RoboticsFormulasStudio onClose={() => setBottomOpen(false)} />
           )}
         </div>
       )}
