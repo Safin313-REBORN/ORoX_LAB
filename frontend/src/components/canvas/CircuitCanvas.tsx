@@ -184,6 +184,18 @@ export const CircuitCanvas: React.FC = () => {
     } else if (comp.type === 'active-buzzer' || comp.type === 'passive-buzzer') {
       nx = 0;
       ny = 1;
+    } else if (comp.type === 'tp4056-module') {
+      nx = pin && pin.x <= 30 ? -1 : 1;
+      ny = 0;
+    } else if (comp.type === 'battery-600mah') {
+      nx = 1;
+      ny = 0;
+    } else if (comp.type === 'display-13-rgb') {
+      nx = 0;
+      ny = -1;
+    } else if (comp.type === 'vibration-sensor') {
+      nx = 0;
+      ny = 1;
     } else if (pin) {
       const meta = COMPONENT_CATALOG[comp.type];
       const w = meta?.width || 100;
@@ -1076,28 +1088,68 @@ export const CircuitCanvas: React.FC = () => {
                 </div>
               ) : comp.type === 'rgb-led' ? (
                 /* ───────────────────────────────────────────────────────── */
-                /* 19. 5mm 4-PIN RGB LED WITH MULTI-COLOR EMISSION           */
+                /* 19. REALISTIC 5mm 4-PIN RGB LED WITH SPECULAR DIFFUSION   */
                 /* ───────────────────────────────────────────────────────── */
-                <div className="w-[70px] h-[80px] flex flex-col items-center justify-between select-none">
-                  {/* 3D Frosted Dome */}
+                <div className="w-[70px] h-[82px] relative select-none flex flex-col items-center">
+                  {/* 3D Frosted Diffuse Epoxy Bulb Dome */}
                   <div
-                    className="w-9 h-11 rounded-t-full rounded-b-md transition-all duration-150 relative border border-white/40 shadow-clay-card bg-slate-200/90"
+                    className="w-10 h-11 rounded-t-full rounded-b-sm transition-all duration-150 relative border border-white/40 shadow-clay-card bg-slate-200/90"
                     style={{
+                      top: 2,
                       boxShadow: comp.state?.illuminated
-                        ? `0 0 30px 8px ${comp.properties?.currentColor || '#ff00ff'}, inset 0 0 10px rgba(255,255,255,0.8)`
-                        : 'inset 0 0 4px rgba(0,0,0,0.2)'
+                        ? `0 0 35px 10px ${comp.properties?.currentColor || '#ff00ff'}, inset 0 0 12px rgba(255,255,255,0.85)`
+                        : 'inset 0 0 6px rgba(0,0,0,0.15)'
                     }}
                   >
-                    <div className="w-2 h-4 rounded-full bg-white/60 absolute top-2 left-2 blur-[0.5px]" />
+                    {/* Specular Highlight */}
+                    <div className="w-2.5 h-4 rounded-full bg-white/70 absolute top-2 left-2.5 blur-[0.5px]" />
+                    {/* Internal RGB Semiconductor Dice */}
+                    <div className="absolute bottom-2 left-2.5 flex space-x-1 opacity-75">
+                      <div className="w-1 h-1.5 rounded-sm bg-rose-500 shadow-[0_0_4px_#ef4444]" />
+                      <div className="w-1 h-2 rounded-sm bg-emerald-500 shadow-[0_0_4px_#10b981]" />
+                      <div className="w-1 h-1.5 rounded-sm bg-blue-500 shadow-[0_0_4px_#3b82f6]" />
+                    </div>
                   </div>
 
-                  {/* 4 Metallic Leads */}
-                  <div className="w-12 flex justify-between">
-                    <div className="w-0.5 h-4 bg-slate-300" />
-                    <div className="w-0.5 h-5 bg-slate-300" />
-                    <div className="w-0.5 h-4 bg-slate-300" />
-                    <div className="w-0.5 h-4 bg-slate-300" />
-                  </div>
+                  {/* Flange Collar Rim */}
+                  <div className="w-11 h-1.5 bg-slate-400/80 border border-slate-500 rounded-sm relative" style={{ top: 1 }} />
+
+                  {/* 4 Precision Silver Metallic Leads meeting pins at x: 16, 28, 42, 54 at y: 70 */}
+                  {/* Red Anode (pin at x: 16, y: 70) */}
+                  <div
+                    className="absolute w-[2.5px] bg-gradient-to-r from-slate-200 via-slate-100 to-slate-400 shadow-sm border-x border-slate-400/50"
+                    style={{ left: 14.75, top: 44, height: 26 }}
+                  />
+                  <span className="absolute text-[7px] font-bold text-rose-400 font-mono pointer-events-none" style={{ left: 12, top: 48 }}>
+                    R
+                  </span>
+
+                  {/* Common Cathode - Longest Lead (pin at x: 28, y: 70) */}
+                  <div
+                    className="absolute w-[2.5px] bg-gradient-to-r from-slate-200 via-slate-100 to-slate-400 shadow-sm border-x border-slate-400/50"
+                    style={{ left: 26.75, top: 44, height: 26 }}
+                  />
+                  <span className="absolute text-[7px] font-bold text-slate-400 font-mono pointer-events-none" style={{ left: 25, top: 48 }}>
+                    -
+                  </span>
+
+                  {/* Green Anode (pin at x: 42, y: 70) */}
+                  <div
+                    className="absolute w-[2.5px] bg-gradient-to-r from-slate-200 via-slate-100 to-slate-400 shadow-sm border-x border-slate-400/50"
+                    style={{ left: 40.75, top: 44, height: 26 }}
+                  />
+                  <span className="absolute text-[7px] font-bold text-emerald-400 font-mono pointer-events-none" style={{ left: 39, top: 48 }}>
+                    G
+                  </span>
+
+                  {/* Blue Anode (pin at x: 54, y: 70) */}
+                  <div
+                    className="absolute w-[2.5px] bg-gradient-to-r from-slate-200 via-slate-100 to-slate-400 shadow-sm border-x border-slate-400/50"
+                    style={{ left: 52.75, top: 44, height: 26 }}
+                  />
+                  <span className="absolute text-[7px] font-bold text-sky-400 font-mono pointer-events-none" style={{ left: 51, top: 48 }}>
+                    B
+                  </span>
                 </div>
               ) : comp.type === 'rotary-encoder' ? (
                 /* ───────────────────────────────────────────────────────── */
@@ -1122,6 +1174,226 @@ export const CircuitCanvas: React.FC = () => {
                     <span>SW</span>
                     <span>+</span>
                     <span>GND</span>
+                  </div>
+                </div>
+              ) : comp.type === 'tp4056-module' ? (
+                /* ───────────────────────────────────────────────────────── */
+                /* 21. REALISTIC TP4056 TYPE-C BATTERY CHARGER MODULE        */
+                /* ───────────────────────────────────────────────────────── */
+                <div className="w-[140px] h-[90px] clay-pcb bg-[#0f2444] border-2 border-blue-500/40 rounded-2xl p-2 select-none relative overflow-hidden shadow-clay-card flex flex-col justify-between">
+                  {/* Left: Type-C USB Port & Power Input Pads */}
+                  <div className="absolute left-1.5 top-1/2 -translate-y-1/2 flex flex-col items-center">
+                    <div className="w-6 h-4 bg-gradient-to-r from-slate-300 via-slate-100 to-slate-400 border border-slate-400 rounded-sm shadow-md flex items-center justify-center">
+                      <div className="w-3.5 h-1.5 bg-[#090d16] rounded-full" />
+                    </div>
+                    <span className="text-[5.5px] font-mono font-bold text-slate-300 mt-0.5">TYPE-C</span>
+                  </div>
+
+                  {/* Input Silkscreen */}
+                  <div className="absolute left-6 top-[15px] text-[7.5px] font-mono font-bold text-cyan-300 pointer-events-none">
+                    IN+
+                  </div>
+                  <div className="absolute left-6 bottom-[15px] text-[7.5px] font-mono font-bold text-cyan-300 pointer-events-none">
+                    IN-
+                  </div>
+
+                  {/* Center: Controller ICs & SMD LEDs */}
+                  <div className="flex flex-col items-center justify-center space-y-1 ml-4">
+                    {/* Status LEDs: Red (Charging) & Blue (Standby / Done) */}
+                    <div className="flex items-center space-x-3">
+                      <div className="flex items-center space-x-1">
+                        <span className={`w-2 h-2 rounded-full ${comp.state?.charging !== false ? 'bg-rose-500 shadow-[0_0_8px_#f43f5e]' : 'bg-rose-950'}`} />
+                        <span className="text-[6px] font-mono font-bold text-rose-300">CHG</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <span className={`w-2 h-2 rounded-full ${comp.state?.charged ? 'bg-cyan-400 shadow-[0_0_8px_#38bdf8]' : 'bg-cyan-950'}`} />
+                        <span className="text-[6px] font-mono font-bold text-cyan-300">STDBY</span>
+                      </div>
+                    </div>
+
+                    {/* TP4056 Chip */}
+                    <div className="w-10 h-5 bg-[#080d16] border border-slate-600 rounded flex items-center justify-center text-[5.5px] font-mono font-bold text-slate-300 shadow-inner">
+                      TP4056
+                    </div>
+
+                    <span className="text-[6.5px] font-mono font-extrabold text-blue-300 tracking-wider">
+                      1A LIPO CHARGER
+                    </span>
+                  </div>
+
+                  {/* Right: Output & Battery Terminal Labels */}
+                  <div className="absolute right-5 top-[11px] text-[7px] font-mono font-bold text-amber-300 pointer-events-none">
+                    OUT+
+                  </div>
+                  <div className="absolute right-5 top-[31px] text-[7px] font-mono font-bold text-emerald-300 pointer-events-none">
+                    B+
+                  </div>
+                  <div className="absolute right-5 bottom-[31px] text-[7px] font-mono font-bold text-emerald-300 pointer-events-none">
+                    B-
+                  </div>
+                  <div className="absolute right-5 bottom-[11px] text-[7px] font-mono font-bold text-amber-300 pointer-events-none">
+                    OUT-
+                  </div>
+                </div>
+              ) : comp.type === 'battery-600mah' ? (
+                /* ───────────────────────────────────────────────────────── */
+                /* 22. REALISTIC 3.7V 600mAh LiPo POUCH CELL BATTERY         */
+                /* ───────────────────────────────────────────────────────── */
+                <div className="w-[130px] h-[80px] relative select-none flex items-center">
+                  {/* Vacuum-sealed Aluminum Foil Laminate Pouch Cell */}
+                  <div className="w-[96px] h-[72px] bg-gradient-to-br from-slate-200 via-slate-300 to-slate-400 border border-slate-400/90 rounded-xl shadow-[inset_2px_2px_4px_rgba(255,255,255,0.8),inset_-2px_-2px_4px_rgba(0,0,0,0.3),2px_3px_8px_rgba(0,0,0,0.4)] p-1.5 flex flex-col justify-between relative overflow-hidden">
+                    {/* Metallic foil reflection line */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12 pointer-events-none" />
+
+                    <div className="flex items-center justify-between text-[7px] font-mono font-bold text-slate-800">
+                      <span>+ 3.7V</span>
+                      <span>600mAh</span>
+                    </div>
+
+                    {/* Central Brand Silkscreen */}
+                    <div className="text-center font-mono my-auto">
+                      <div className="text-[8px] font-extrabold text-slate-900 tracking-wider">
+                        Li-Polymer
+                      </div>
+                      <div className="text-[6px] text-slate-600 font-semibold mt-0.5">
+                        603035 • 2.22Wh
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[6px] font-mono text-slate-700">
+                      <span>PCM PROTECTED</span>
+                      <span className="text-emerald-700 font-bold">{comp.state?.socPercent || 80}%</span>
+                    </div>
+                  </div>
+
+                  {/* Yellow Kapton High-Temperature Tape Sealing Collar */}
+                  <div className="w-3.5 h-[62px] bg-[#d97706]/85 border border-amber-600/90 rounded-r shadow-inner flex flex-col justify-between py-2 -ml-0.5 z-10">
+                    <div className="w-1.5 h-1.5 rounded-full bg-rose-600 mx-auto" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-slate-900 mx-auto" />
+                  </div>
+
+                  {/* Red Positive Lead Wire extending to pin at (118, 26) */}
+                  <div
+                    className="absolute h-[3px] bg-gradient-to-b from-rose-500 via-rose-600 to-rose-700 shadow-sm border-y border-rose-700 rounded-sm"
+                    style={{ left: 100, width: 18, top: 24.5 }}
+                  />
+
+                  {/* Black Negative Lead Wire extending to pin at (118, 54) */}
+                  <div
+                    className="absolute h-[3px] bg-gradient-to-b from-slate-700 via-slate-800 to-slate-950 shadow-sm border-y border-slate-950 rounded-sm"
+                    style={{ left: 100, width: 18, top: 52.5 }}
+                  />
+                </div>
+              ) : comp.type === 'display-13-rgb' ? (
+                /* ───────────────────────────────────────────────────────── */
+                /* 23. REALISTIC 1.3" IPS 240x240 FULL-COLOR RGB TFT DISPLAY */
+                /* ───────────────────────────────────────────────────────── */
+                <div className="w-[140px] h-[115px] clay-pcb bg-[#090e1a] border-2 border-slate-700/60 rounded-2xl p-2 select-none relative overflow-hidden shadow-clay-card flex flex-col justify-between">
+                  {/* Top Pinout Silkscreen Labels aligned under pins at y: 14 */}
+                  <div className="flex items-center justify-between px-1 text-[6.5px] font-mono font-bold text-cyan-300 pt-3">
+                    <span>GND</span>
+                    <span>VCC</span>
+                    <span>SCL</span>
+                    <span>SDA</span>
+                    <span>RES</span>
+                    <span>DC</span>
+                    <span>CS</span>
+                    <span>BLK</span>
+                  </div>
+
+                  {/* 1.3" IPS Color Screen Glass Bezel */}
+                  <div className="w-[116px] h-[72px] bg-black border-2 border-slate-800 rounded-xl mx-auto flex items-center justify-center relative overflow-hidden shadow-clay-inner">
+                    {/* Dynamic Full-Color Graphic / Telemetry Display */}
+                    <div className="w-full h-full bg-gradient-to-br from-[#051125] via-[#091b36] to-[#040c1a] p-1 flex flex-col justify-between">
+                      {/* Top Header */}
+                      <div className="flex items-center justify-between text-[6px] font-mono text-cyan-400">
+                        <span className="font-bold">ORoX • IPS</span>
+                        <span className="text-amber-400 font-bold">240×240</span>
+                      </div>
+
+                      {/* Center Circular Horizon / Radar HUD */}
+                      <div className="flex items-center justify-center space-x-2 my-auto">
+                        <div className="w-8 h-8 rounded-full border-2 border-cyan-400/80 flex items-center justify-center relative">
+                          <div className="w-5 h-5 rounded-full border border-dashed border-amber-400" />
+                          <div className="w-1.5 h-1.5 bg-rose-500 rounded-full shadow-[0_0_6px_#f43f5e]" />
+                        </div>
+                        <div className="text-[6.5px] font-mono leading-tight space-y-0.5">
+                          <div className="text-emerald-400 font-bold">RGB565</div>
+                          <div className="text-slate-300">ST7789V</div>
+                          <div className="text-cyan-300">65K CLR</div>
+                        </div>
+                      </div>
+
+                      {/* Bottom RGB Spectrum Bar */}
+                      <div className="w-full h-1 bg-gradient-to-r from-rose-500 via-amber-400 via-emerald-400 via-cyan-400 to-purple-500 rounded-full shadow-sm" />
+                    </div>
+
+                    {/* Specular Curved Screen Glass Sheen */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-transparent pointer-events-none" />
+                  </div>
+
+                  <div className="text-[7px] font-mono font-bold text-slate-400 text-center">
+                    1.3" IPS TFT LCD (SPI)
+                  </div>
+                </div>
+              ) : comp.type === 'vibration-sensor' ? (
+                /* ───────────────────────────────────────────────────────── */
+                /* 24. REALISTIC SW-420 VIBRATION SENSOR MODULE              */
+                /* ───────────────────────────────────────────────────────── */
+                <div 
+                  onClick={() => {
+                    updateComponentState(comp.id, 'vibrating', true);
+                    setTimeout(() => updateComponentState(comp.id, 'vibrating', false), 400);
+                  }}
+                  className={`w-[120px] h-[75px] clay-pcb bg-[#0a1e38] border-2 rounded-2xl p-2 select-none relative overflow-hidden shadow-clay-card flex flex-col justify-between cursor-pointer transition-all ${
+                    comp.state?.vibrating
+                      ? 'border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.5)] scale-102'
+                      : 'border-blue-500/40 hover:border-blue-400'
+                  }`}
+                  title="Click to simulate tap / vibration trigger"
+                >
+                  {/* Top Section: Gold Spring Tube + Trimmer + LEDs */}
+                  <div className="flex items-center justify-between px-1">
+                    {/* Gold Vibration Tube */}
+                    <div className="w-10 h-4 rounded-full bg-gradient-to-r from-amber-300 via-amber-100 to-amber-500 border border-amber-600 shadow-md flex items-center justify-center relative">
+                      <div className="w-6 h-1 border-b border-dashed border-amber-800 opacity-60" />
+                    </div>
+
+                    {/* Dual SMD LEDs: PWR & DO */}
+                    <div className="flex items-center space-x-1.5">
+                      <div className="flex flex-col items-center">
+                        <span className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_6px_#f43f5e]" />
+                        <span className="text-[5px] font-mono text-slate-400 mt-0.5">PWR</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <span className={`w-2 h-2 rounded-full transition-all ${comp.state?.vibrating ? 'bg-emerald-400 shadow-[0_0_10px_#10b981]' : 'bg-emerald-950'}`} />
+                        <span className="text-[5px] font-mono text-slate-400 mt-0.5">DO</span>
+                      </div>
+                    </div>
+
+                    {/* Blue Sensitivity Trimmer with brass screw */}
+                    <div className="w-5 h-5 bg-blue-600 rounded border border-blue-400 flex items-center justify-center shadow-inner">
+                      <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-br from-amber-200 to-amber-400 border border-amber-500 flex items-center justify-center">
+                        <div className="w-1.5 h-0.5 bg-amber-800" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Center LM393 Silkscreen */}
+                  <div className="text-center font-mono">
+                    <span className="text-[7.5px] font-extrabold text-blue-300 tracking-wider">
+                      SW-420 VIBRATION
+                    </span>
+                    <div className="text-[6px] text-slate-400 font-semibold">
+                      LM393 COMPARATOR
+                    </div>
+                  </div>
+
+                  {/* Bottom: Silkscreen Labels aligned above pins at y: 64 */}
+                  <div className="flex items-center justify-around text-[7.5px] font-mono font-bold text-cyan-300 pb-2">
+                    <span>VCC</span>
+                    <span>GND</span>
+                    <span className="text-amber-300">DO</span>
                   </div>
                 </div>
               ) : null}

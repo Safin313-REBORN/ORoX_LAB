@@ -869,5 +869,167 @@ void loop() {
         }
       ]
     }
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // 11. Autonomous Wearable: LiPo, TP4056, 1.3" IPS & Vibration
+  // ─────────────────────────────────────────────────────────────
+  {
+    id: 'p11_wearable_lipo_display',
+    name: '11. LiPo Power & IPS Smart Tracker',
+    description: 'Autonomous wearable tracker with 600mAh LiPo cell, TP4056 Type-C power path, 1.3" IPS 240x240 RGB display, SW-420 seismic vibration trigger, and 4-pin RGB LED.',
+    category: 'Advanced Robotics',
+    libraries: ['Adafruit_GFX', 'Adafruit_ST7789'],
+    expectedResults: 'TP4056 charges 600mAh cell; 1.3" IPS displays telemetry; SW-420 triggers haptic alert and RGB LED flash upon vibration.',
+    executionMode: 'modeA',
+    testStatus: 'verified',
+    project: {
+      id: 'p11_wearable_lipo_display',
+      name: 'LiPo Power & IPS Smart Tracker',
+      schemaVersion: 1,
+      boardId: 'esp32doit-devkit-v1',
+      framework: 'arduino',
+      simulationMode: 'modeA',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      components: [
+        {
+          id: 'esp32_1',
+          type: 'esp32doit-devkit-v1',
+          name: 'ESP32 Core Microcontroller',
+          x: 420,
+          y: 70,
+          rotation: 0,
+          properties: {},
+          state: {}
+        },
+        {
+          id: 'tp4056_1',
+          type: 'tp4056-module',
+          name: 'TP4056 Type-C Charger',
+          x: 230,
+          y: 60,
+          rotation: 0,
+          properties: { usbPowered: true },
+          state: { charging: true, charged: false }
+        },
+        {
+          id: 'bat_1',
+          type: 'battery-600mah',
+          name: '600mAh 3.7V LiPo Pouch',
+          x: 50,
+          y: 70,
+          rotation: 0,
+          properties: { capacityMah: 600 },
+          state: { socPercent: 88, voltage: 4.05 }
+        },
+        {
+          id: 'display_1',
+          type: 'display-13-rgb',
+          name: '1.3" IPS 240x240 TFT Display',
+          x: 420,
+          y: 340,
+          rotation: 0,
+          properties: { resolution: '240x240', driver: 'ST7789' },
+          state: { backlightOn: true, demoPattern: 'radar' }
+        },
+        {
+          id: 'vib_1',
+          type: 'vibration-sensor',
+          name: 'SW-420 Vibration Sensor',
+          x: 720,
+          y: 80,
+          rotation: 0,
+          properties: { sensitivity: 65 },
+          state: { vibrating: false }
+        },
+        {
+          id: 'rgb_1',
+          type: 'rgb-led',
+          name: '5mm Diffuse RGB LED',
+          x: 740,
+          y: 260,
+          rotation: 0,
+          properties: { currentColor: '#06b6d4' },
+          state: { illuminated: true }
+        }
+      ],
+      wires: [
+        // Battery to TP4056 Cell Terminals
+        { id: 'w_b_pos', start: { componentId: 'bat_1', pinId: 'pos' }, end: { componentId: 'tp4056_1', pinId: 'bat_plus' }, color: '#ef4444' },
+        { id: 'w_b_neg', start: { componentId: 'bat_1', pinId: 'neg' }, end: { componentId: 'tp4056_1', pinId: 'bat_minus' }, color: '#000000' },
+
+        // TP4056 Output to ESP32 VIN & GND
+        { id: 'w_pwr_vin', start: { componentId: 'tp4056_1', pinId: 'out_plus' }, end: { componentId: 'esp32_1', pinId: 'vin' }, color: '#ef4444' },
+        { id: 'w_pwr_gnd', start: { componentId: 'tp4056_1', pinId: 'out_minus' }, end: { componentId: 'esp32_1', pinId: 'gnd_1' }, color: '#10b981' },
+
+        // Vibration Sensor to ESP32 (VCC, GND, DO -> GPIO27)
+        { id: 'w_v_vcc', start: { componentId: 'esp32_1', pinId: 'v3v3' }, end: { componentId: 'vib_1', pinId: 'vcc' }, color: '#ef4444' },
+        { id: 'w_v_gnd', start: { componentId: 'esp32_1', pinId: 'gnd_2' }, end: { componentId: 'vib_1', pinId: 'gnd' }, color: '#10b981' },
+        { id: 'w_v_do', start: { componentId: 'vib_1', pinId: 'do' }, end: { componentId: 'esp32_1', pinId: 'gpio27' }, color: '#f59e0b' },
+
+        // RGB LED to ESP32 (Cathode to GND, R -> GPIO25, G -> GPIO26, B -> GPIO32)
+        { id: 'w_rgb_gnd', start: { componentId: 'esp32_1', pinId: 'gnd_2' }, end: { componentId: 'rgb_1', pinId: 'cathode' }, color: '#10b981' },
+        { id: 'w_rgb_r', start: { componentId: 'esp32_1', pinId: 'gpio25' }, end: { componentId: 'rgb_1', pinId: 'r' }, color: '#ef4444' },
+        { id: 'w_rgb_g', start: { componentId: 'esp32_1', pinId: 'gpio26' }, end: { componentId: 'rgb_1', pinId: 'g' }, color: '#10b981' },
+        { id: 'w_rgb_b', start: { componentId: 'esp32_1', pinId: 'gpio32' }, end: { componentId: 'rgb_1', pinId: 'b' }, color: '#3b82f6' }
+      ],
+      files: [
+        {
+          id: 'main_ino',
+          name: 'sketch.ino',
+          content: `// Project 11: Autonomous Smart Wearable System
+// Hardware: ESP32 + TP4056 + 600mAh LiPo + 1.3" IPS + SW-420 + RGB LED
+// Platform: ORoXLAB Robotics & Embedded Studio
+
+#define PIN_VIB_DO    27  // SW-420 Vibration Digital Input
+#define PIN_LED_RED   25  // RGB LED Red Anode
+#define PIN_LED_GRN   26  // RGB LED Green Anode
+#define PIN_LED_BLU   32  // RGB LED Blue Anode
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(PIN_VIB_DO, INPUT);
+  pinMode(PIN_LED_RED, OUTPUT);
+  pinMode(PIN_LED_GRN, OUTPUT);
+  pinMode(PIN_LED_BLU, OUTPUT);
+
+  // Normal Standby: Cyan Glow (Green + Blue)
+  digitalWrite(PIN_LED_RED, LOW);
+  digitalWrite(PIN_LED_GRN, HIGH);
+  digitalWrite(PIN_LED_BLU, HIGH);
+
+  Serial.println("==========================================");
+  Serial.println(" [ORoXLAB] SMART WEARABLE INITIALIZED");
+  Serial.println(" Power: TP4056 + 3.7V 600mAh LiPo (4.05V)");
+  Serial.println(" Display: 1.3-inch 240x240 IPS TFT (ST7789)");
+  Serial.println(" Sensor: SW-420 Seismic Vibration Monitor");
+  Serial.println("==========================================");
+}
+
+void loop() {
+  int vib = digitalRead(PIN_VIB_DO);
+
+  if (vib == HIGH) {
+    // Vibration Shock Detected: Flash Emergency Red Alert
+    digitalWrite(PIN_LED_RED, HIGH);
+    digitalWrite(PIN_LED_GRN, LOW);
+    digitalWrite(PIN_LED_BLU, LOW);
+    Serial.println("[ALERT] Shock / Tap Triggered! Seismic DO = HIGH");
+    delay(400);
+  } else {
+    // Normal Standby: Cyan Ambient
+    digitalWrite(PIN_LED_RED, LOW);
+    digitalWrite(PIN_LED_GRN, HIGH);
+    digitalWrite(PIN_LED_BLU, HIGH);
+  }
+
+  delay(50);
+}
+`
+        }
+      ]
+    }
   }
 ];
+

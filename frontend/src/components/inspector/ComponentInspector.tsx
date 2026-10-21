@@ -495,20 +495,303 @@ export const ComponentInspector: React.FC = () => {
 
           {/* RGB LED CONTROLS */}
           {selectedComp.type === 'rgb-led' && (
-            <div className="space-y-2.5 font-sans">
-              <div className="text-[11px] text-slate-400">Color Presets:</div>
-              <div className="flex flex-wrap gap-1.5">
-                {['#ef4444', '#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899', '#ffffff'].map((color) => (
-                  <button
-                    key={color}
-                    onClick={() => {
-                      updateComponentProperty(selectedComp.id, 'currentColor', color);
-                      updateComponentState(selectedComp.id, 'illuminated', true);
-                    }}
-                    className="w-6 h-6 rounded-full border-2 border-white/40 shadow-clay-pill hover:scale-110 transition-transform"
-                    style={{ backgroundColor: color }}
-                  />
-                ))}
+            <div className="space-y-3 font-sans">
+              <div className="flex justify-between items-center text-[11px] font-mono">
+                <span className="text-slate-400 font-sans">Illumination:</span>
+                <button
+                  onClick={() => updateComponentState(selectedComp.id, 'illuminated', !selectedComp.state?.illuminated)}
+                  className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
+                    selectedComp.state?.illuminated
+                      ? 'clay-btn-success text-white'
+                      : 'bg-[#141d30] text-slate-400 border border-white/10'
+                  }`}
+                >
+                  {selectedComp.state?.illuminated ? '💡 ON' : 'OFF'}
+                </button>
+              </div>
+
+              <div>
+                <div className="text-[11px] text-slate-400 mb-1.5">Color Palette:</div>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { name: 'Red', hex: '#ef4444' },
+                    { name: 'Green', hex: '#10b981' },
+                    { name: 'Blue', hex: '#3b82f6' },
+                    { name: 'Yellow', hex: '#f59e0b' },
+                    { name: 'Purple', hex: '#a855f7' },
+                    { name: 'Cyan', hex: '#06b6d4' },
+                    { name: 'Magenta', hex: '#ec4899' },
+                    { name: 'White', hex: '#ffffff' }
+                  ].map((preset) => (
+                    <button
+                      key={preset.hex}
+                      onClick={() => {
+                        updateComponentProperty(selectedComp.id, 'currentColor', preset.hex);
+                        updateComponentState(selectedComp.id, 'illuminated', true);
+                      }}
+                      title={preset.name}
+                      className="w-6 h-6 rounded-full border-2 border-white/40 shadow-clay-pill hover:scale-115 transition-transform"
+                      style={{ backgroundColor: preset.hex }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center text-[11px] font-mono">
+                <span className="text-slate-400 font-sans">Custom Hex:</span>
+                <input
+                  type="color"
+                  value={selectedComp.properties?.currentColor || '#ff00ff'}
+                  onChange={(e) => {
+                    updateComponentProperty(selectedComp.id, 'currentColor', e.target.value);
+                    updateComponentState(selectedComp.id, 'illuminated', true);
+                  }}
+                  className="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* TP4056 CHARGING MODULE CONTROLS */}
+          {selectedComp.type === 'tp4056-module' && (
+            <div className="space-y-3 font-sans">
+              <button
+                onClick={() => {
+                  const currentPowered = selectedComp.properties?.usbPowered !== false;
+                  updateComponentProperty(selectedComp.id, 'usbPowered', !currentPowered);
+                  updateComponentState(selectedComp.id, 'inputVoltage', !currentPowered ? 5.0 : 0.0);
+                  if (currentPowered) {
+                    updateComponentState(selectedComp.id, 'charging', false);
+                    updateComponentState(selectedComp.id, 'charged', false);
+                  } else {
+                    updateComponentState(selectedComp.id, 'charging', true);
+                  }
+                }}
+                className={`w-full py-2.5 rounded-2xl font-bold text-xs transition-all ${
+                  selectedComp.properties?.usbPowered !== false
+                    ? 'clay-btn-success text-white'
+                    : 'bg-[#18233a] hover:bg-[#202f4d] text-slate-300 border border-white/10'
+                }`}
+              >
+                {selectedComp.properties?.usbPowered !== false
+                  ? '⚡ 5V USB-C CONNECTED'
+                  : '🔌 PLUG IN 5V USB-C CABLE'}
+              </button>
+
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => {
+                    updateComponentState(selectedComp.id, 'charging', true);
+                    updateComponentState(selectedComp.id, 'charged', false);
+                    updateComponentState(selectedComp.id, 'outputVoltage', 4.12);
+                  }}
+                  className={`py-2 rounded-xl text-xs font-bold transition-all ${
+                    selectedComp.state?.charging !== false
+                      ? 'bg-rose-500/20 text-rose-300 border border-rose-500/50 shadow-[0_0_12px_rgba(244,63,94,0.3)]'
+                      : 'bg-[#141d30] text-slate-400 border border-white/10'
+                  }`}
+                >
+                  🔴 Charging (CHG)
+                </button>
+                <button
+                  onClick={() => {
+                    updateComponentState(selectedComp.id, 'charging', false);
+                    updateComponentState(selectedComp.id, 'charged', true);
+                    updateComponentState(selectedComp.id, 'outputVoltage', 4.20);
+                  }}
+                  className={`py-2 rounded-xl text-xs font-bold transition-all ${
+                    selectedComp.state?.charged
+                      ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 shadow-[0_0_12px_rgba(6,182,212,0.3)]'
+                      : 'bg-[#141d30] text-slate-400 border border-white/10'
+                  }`}
+                >
+                  🔵 Full (STDBY)
+                </button>
+              </div>
+
+              <div className="space-y-1.5 font-mono text-[11px] bg-[#111728] p-2 rounded-xl border border-white/[0.04]">
+                <div className="flex justify-between">
+                  <span className="text-slate-400 font-sans">Input Voltage:</span>
+                  <span className="text-white font-bold">{selectedComp.properties?.usbPowered !== false ? '5.00 V' : '0.00 V'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400 font-sans">Batt Terminal:</span>
+                  <span className="text-emerald-400 font-bold">{selectedComp.state?.outputVoltage || 4.20} V</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400 font-sans">Charge Rate:</span>
+                  <span className="text-amber-400 font-bold">1000 mA (R_prog 1.2k)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400 font-sans">DW01A Protection:</span>
+                  <span className="text-cyan-400 font-bold">ACTIVE</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 3.7V 600mAh LiPo BATTERY CONTROLS */}
+          {selectedComp.type === 'battery-600mah' && (
+            <div className="space-y-3 font-sans">
+              <div>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-slate-400">State of Charge (SOC):</span>
+                  <span className="text-emerald-400 font-mono font-bold">
+                    {selectedComp.state?.socPercent ?? 80}%
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="1"
+                  value={selectedComp.state?.socPercent ?? 80}
+                  onChange={(e) => {
+                    const soc = Number(e.target.value);
+                    const voltage = Number((3.0 + (soc / 100) * 1.2).toFixed(2));
+                    updateComponentState(selectedComp.id, 'socPercent', soc);
+                    updateComponentState(selectedComp.id, 'voltage', voltage);
+                  }}
+                  className="w-full accent-emerald-400 bg-slate-800 rounded-lg cursor-pointer"
+                />
+              </div>
+
+              <div className="space-y-1.5 font-mono text-[11px] bg-[#111728] p-2.5 rounded-xl border border-white/[0.04]">
+                <div className="flex justify-between">
+                  <span className="text-slate-400 font-sans">Cell Voltage:</span>
+                  <span className="text-emerald-400 font-bold">
+                    {selectedComp.state?.voltage || (3.0 + ((selectedComp.state?.socPercent ?? 80) / 100) * 1.2).toFixed(2)} V
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400 font-sans">Rated Capacity:</span>
+                  <span className="text-white font-bold">600 mAh (2.22 Wh)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400 font-sans">Max Discharge:</span>
+                  <span className="text-amber-400 font-bold">1C (600 mA cont.)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400 font-sans">Form Factor:</span>
+                  <span className="text-slate-300 font-bold">603035 Pouch Cell</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 1.3" IPS 240x240 RGB DISPLAY CONTROLS */}
+          {selectedComp.type === 'display-13-rgb' && (
+            <div className="space-y-3 font-sans">
+              <div className="flex justify-between items-center text-[11px] font-mono">
+                <span className="text-slate-400 font-sans">Backlight:</span>
+                <button
+                  onClick={() => updateComponentState(selectedComp.id, 'backlightOn', !selectedComp.state?.backlightOn)}
+                  className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
+                    selectedComp.state?.backlightOn !== false
+                      ? 'clay-btn-primary text-white'
+                      : 'bg-[#141d30] text-slate-400 border border-white/10'
+                  }`}
+                >
+                  {selectedComp.state?.backlightOn !== false ? 'BACKLIGHT ON' : 'BACKLIGHT OFF'}
+                </button>
+              </div>
+
+              <div>
+                <div className="text-[11px] text-slate-400 mb-1.5">Graphic Screen Demo:</div>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { id: 'radar', label: 'Radar HUD' },
+                    { id: 'spectrum', label: 'Color Bars' },
+                    { id: 'telemetry', label: 'ORoXLAB Telemetry' },
+                    { id: 'off', label: 'Blank Screen' }
+                  ].map((mode) => (
+                    <button
+                      key={mode.id}
+                      onClick={() => updateComponentState(selectedComp.id, 'demoPattern', mode.id)}
+                      className={`py-2 rounded-xl text-xs font-bold transition-all ${
+                        (selectedComp.state?.demoPattern || 'radar') === mode.id
+                          ? 'clay-btn-primary text-white shadow-clay-btn'
+                          : 'bg-[#141d30] text-slate-300 border border-white/10 hover:bg-[#1a2640]'
+                      }`}
+                    >
+                      {mode.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-1 font-mono text-[11px] bg-[#111728] p-2 rounded-xl border border-white/[0.04]">
+                <div className="flex justify-between">
+                  <span className="text-slate-400 font-sans">Panel Type:</span>
+                  <span className="text-cyan-400 font-bold">1.3" IPS TFT LCD</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400 font-sans">Resolution:</span>
+                  <span className="text-white font-bold">240 × 240 (RGB565)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400 font-sans">Driver IC:</span>
+                  <span className="text-amber-400 font-bold">ST7789V (4-Wire SPI)</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* SW-420 VIBRATION SENSOR CONTROLS */}
+          {selectedComp.type === 'vibration-sensor' && (
+            <div className="space-y-3 font-sans">
+              <button
+                onMouseDown={() => {
+                  updateComponentState(selectedComp.id, 'vibrating', true);
+                  updateComponentState(selectedComp.id, 'outputHigh', true);
+                }}
+                onMouseUp={() => {
+                  setTimeout(() => {
+                    updateComponentState(selectedComp.id, 'vibrating', false);
+                    updateComponentState(selectedComp.id, 'outputHigh', false);
+                  }, 600);
+                }}
+                className={`w-full py-3 rounded-2xl font-bold text-xs transition-all ${
+                  selectedComp.state?.vibrating
+                    ? 'clay-btn-danger text-white scale-98 shadow-clay-inner'
+                    : 'clay-btn-primary text-white shadow-clay-btn'
+                }`}
+              >
+                {selectedComp.state?.vibrating ? '⚡ VIBRATION DETECTED! (DO = HIGH)' : '📳 TAP / SHAKE SENSOR'}
+              </button>
+
+              <div>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-slate-400">Trimmer Sensitivity:</span>
+                  <span className="text-cyan-400 font-mono font-bold">
+                    {selectedComp.properties?.sensitivity ?? 50}%
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="5"
+                  max="100"
+                  value={selectedComp.properties?.sensitivity ?? 50}
+                  onChange={(e) => updateComponentProperty(selectedComp.id, 'sensitivity', Number(e.target.value))}
+                  className="w-full accent-cyan-400 bg-slate-800 rounded-lg cursor-pointer"
+                />
+              </div>
+
+              <div className="space-y-1 font-mono text-[11px] bg-[#111728] p-2 rounded-xl border border-white/[0.04]">
+                <div className="flex justify-between">
+                  <span className="text-slate-400 font-sans">Switch Type:</span>
+                  <span className="text-white font-bold">Normally Closed (NC)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400 font-sans">Signal (DO):</span>
+                  <span className={`font-bold ${selectedComp.state?.vibrating ? 'text-emerald-400' : 'text-slate-400'}`}>
+                    {selectedComp.state?.vibrating ? 'HIGH (3.3V)' : 'LOW (0.0V)'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400 font-sans">Comparator:</span>
+                  <span className="text-amber-400 font-bold">LM393 Dual Op-Amp</span>
+                </div>
               </div>
             </div>
           )}

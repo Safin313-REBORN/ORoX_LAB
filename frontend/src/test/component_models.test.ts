@@ -123,6 +123,10 @@ describe('Robotics Components Catalog Integrity', () => {
     'relay',
     'rgb-led',
     'rotary-encoder',
+    'tp4056-module',
+    'battery-600mah',
+    'display-13-rgb',
+    'vibration-sensor',
   ];
 
   for (const type of roboticsTypes) {

@@ -502,5 +502,104 @@ export const COMPONENT_CATALOG: Record<string, ComponentMetadata> = {
       buttonPressed: false,
       direction: 'NONE'
     }
+  },
+
+  'tp4056-module': {
+    type: 'tp4056-module',
+    category: 'power',
+    name: 'TP4056 USB-C Charger Module',
+    description: '1A Lithium battery charging module with Type-C USB port, dual charging status LEDs, and DW01A protection.',
+    width: 140,
+    height: 90,
+    pins: [
+      { id: 'in_plus', name: 'IN+', label: 'IN+', x: 14, y: 20, direction: 'power', signalType: 'POWER_VCC', voltageMin: 4.5, voltageMax: 5.5, description: '5V USB / DC Power Input +' },
+      { id: 'in_minus', name: 'IN-', label: 'IN-', x: 14, y: 70, direction: 'power', signalType: 'POWER_GND', description: 'Power Input Ground -' },
+      { id: 'out_plus', name: 'OUT+', label: 'OUT+', x: 126, y: 16, direction: 'output', signalType: 'POWER_VCC', description: 'System Protected Load +' },
+      { id: 'bat_plus', name: 'B+', label: 'B+', x: 126, y: 36, direction: 'power', signalType: 'POWER_VCC', description: 'Lithium Battery Cell +' },
+      { id: 'bat_minus', name: 'B-', label: 'B-', x: 126, y: 54, direction: 'power', signalType: 'POWER_GND', description: 'Lithium Battery Cell -' },
+      { id: 'out_minus', name: 'OUT-', label: 'OUT-', x: 126, y: 74, direction: 'output', signalType: 'POWER_GND', description: 'System Protected Load -' }
+    ],
+    defaultProperties: {
+      usbPowered: true,
+      maxChargeCurrentMa: 1000
+    },
+    defaultState: {
+      charging: true,
+      charged: false,
+      inputVoltage: 5.0,
+      outputVoltage: 4.2
+    }
+  },
+
+  'battery-600mah': {
+    type: 'battery-600mah',
+    category: 'power',
+    name: '3.7V 600mAh LiPo Battery',
+    description: 'Rechargeable 3.7V 600mAh lithium-polymer pouch cell with internal PCM protection circuit and silicone wire leads.',
+    width: 130,
+    height: 80,
+    pins: [
+      { id: 'pos', name: '+', label: '+', x: 118, y: 26, direction: 'power', signalType: 'POWER_VCC', voltageMin: 3.0, voltageMax: 4.2, description: 'Battery Positive (Red Wire, +3.7V)' },
+      { id: 'neg', name: '-', label: '-', x: 118, y: 54, direction: 'power', signalType: 'POWER_GND', description: 'Battery Ground (Black Wire, 0V)' }
+    ],
+    defaultProperties: {
+      capacityMah: 600,
+      cellChemistry: 'LiPo',
+      nominalVoltage: 3.7
+    },
+    defaultState: {
+      socPercent: 80,
+      voltage: 3.92,
+      currentMa: 0
+    }
+  },
+
+  'display-13-rgb': {
+    type: 'display-13-rgb',
+    category: 'displays',
+    name: '1.3" IPS 240x240 RGB Display',
+    description: 'High-definition 1.3 inch 240x240 IPS 65K full-color TFT display driven by ST7789 via high-speed SPI.',
+    width: 140,
+    height: 115,
+    pins: [
+      { id: 'gnd', name: 'GND', label: 'GND', x: 18, y: 14, direction: 'power', signalType: 'POWER_GND', description: 'Ground' },
+      { id: 'vcc', name: 'VCC', label: 'VCC', x: 33, y: 14, direction: 'power', signalType: 'POWER_VCC', voltageMin: 3.0, voltageMax: 5.0, description: 'Power 3.3V - 5V' },
+      { id: 'scl', name: 'SCL', label: 'SCL', x: 48, y: 14, direction: 'input', signalType: 'SPI_SCK', description: 'SPI Clock (SCK)' },
+      { id: 'sda', name: 'SDA', label: 'SDA', x: 63, y: 14, direction: 'input', signalType: 'SPI_MOSI', description: 'SPI Data (MOSI)' },
+      { id: 'res', name: 'RES', label: 'RES', x: 78, y: 14, direction: 'input', signalType: 'DIGITAL', description: 'Reset (Active Low)' },
+      { id: 'dc', name: 'DC', label: 'DC', x: 93, y: 14, direction: 'input', signalType: 'DIGITAL', description: 'Data / Command Select' },
+      { id: 'cs', name: 'CS', label: 'CS', x: 108, y: 14, direction: 'input', signalType: 'SPI_CS', description: 'Chip Select' },
+      { id: 'blk', name: 'BLK', label: 'BLK', x: 123, y: 14, direction: 'input', signalType: 'DIGITAL', description: 'Backlight Control' }
+    ],
+    defaultProperties: {
+      resolution: '240x240',
+      driver: 'ST7789',
+      colorMode: 'RGB565'
+    },
+    defaultState: {
+      backlightOn: true,
+      demoPattern: 'radar'
+    }
+  },
+
+  'vibration-sensor': {
+    type: 'vibration-sensor',
+    category: 'sensors',
+    name: 'SW-420 Vibration Sensor',
+    description: 'Normally closed high-sensitivity vibration detection module featuring SW-420 switch and LM393 voltage comparator.',
+    width: 120,
+    height: 75,
+    pins: [
+      { id: 'vcc', name: 'VCC', label: 'VCC', x: 30, y: 64, direction: 'power', signalType: 'POWER_VCC', voltageMin: 3.3, voltageMax: 5.5, description: 'Power 3.3V - 5V' },
+      { id: 'gnd', name: 'GND', label: 'GND', x: 60, y: 64, direction: 'power', signalType: 'POWER_GND', description: 'Ground' },
+      { id: 'do', name: 'DO', label: 'DO', x: 90, y: 64, direction: 'output', signalType: 'DIGITAL', description: 'Digital Output (High when vibrating)' }
+    ],
+    defaultProperties: {
+      sensitivity: 50
+    },
+    defaultState: {
+      vibrating: false,
+      outputHigh: false
+    }
   }
 };
