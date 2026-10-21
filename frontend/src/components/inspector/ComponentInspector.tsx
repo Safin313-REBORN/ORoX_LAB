@@ -4,7 +4,7 @@ import { BOARD_DEFINITIONS } from '../../boards/boardRegistry';
 import { COMPONENT_CATALOG } from '../../simulation/models/componentRegistry';
 import { 
   RotateCw, Trash2, Sliders, Battery, Compass, Volume2, 
-  Tv, Power, Zap, Activity, Info, Sparkles 
+  Tv, Power, Zap, Activity, Info, Sparkles, X 
 } from 'lucide-react';
 
 export const ComponentInspector: React.FC = () => {
@@ -12,6 +12,8 @@ export const ComponentInspector: React.FC = () => {
     project,
     selectedComponentId,
     simulationTelemetry,
+    isInspectorOpen,
+    toggleInspector,
     rotateComponent,
     deleteComponent,
     updateComponentProperty,
@@ -24,15 +26,30 @@ export const ComponentInspector: React.FC = () => {
   if (!selectedComp) {
     const board = BOARD_DEFINITIONS[project.boardId] || BOARD_DEFINITIONS['esp32doit-devkit-v1'];
     return (
-      <div className="w-80 bg-[#0d1322] border-l border-white/[0.06] flex flex-col h-full p-4 select-none text-slate-300 shadow-[-4px_0_24px_rgba(0,0,0,0.4)] z-20">
-        <div className="flex items-center space-x-2.5 pb-3 border-b border-white/[0.06]">
-          <div className="w-9 h-9 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-xs shadow-clay-pill">
-            <Zap className="w-5 h-5 text-cyan-400" />
+      <div 
+        className={`absolute right-0 top-0 bottom-0 z-30 w-80 sm:w-84 bg-[#0d1424]/95 backdrop-blur-xl border-l border-white/10 flex flex-col h-full p-4 select-none text-slate-300 shadow-[-8px_0_32px_rgba(0,0,0,0.6)] transition-all duration-300 ease-in-out ${
+          isInspectorOpen 
+            ? 'translate-x-0 opacity-100 pointer-events-auto' 
+            : 'translate-x-full opacity-0 pointer-events-none'
+        }`}
+      >
+        <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
+          <div className="flex items-center space-x-2.5">
+            <div className="w-9 h-9 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-xs shadow-clay-pill">
+              <Zap className="w-5 h-5 text-cyan-400" />
+            </div>
+            <div>
+              <h2 className="text-xs font-extrabold text-white">{board.name}</h2>
+              <div className="text-[10px] text-cyan-400 font-mono mt-0.5">{board.module} • 240MHz</div>
+            </div>
           </div>
-          <div>
-            <h2 className="text-xs font-extrabold text-white">{board.name}</h2>
-            <div className="text-[10px] text-cyan-400 font-mono mt-0.5">{board.module} • 240MHz</div>
-          </div>
+          <button
+            onClick={toggleInspector}
+            className="p-1.5 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white transition-all shadow-clay-btn"
+            title="Close Inspector"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
         <div className="space-y-4 text-xs overflow-y-auto custom-scrollbar flex-1 pt-3">
@@ -92,7 +109,13 @@ export const ComponentInspector: React.FC = () => {
   const meta = COMPONENT_CATALOG[selectedComp.type];
 
   return (
-    <div className="w-80 bg-[#0d1322] border-l border-white/[0.06] flex flex-col h-full p-4 select-none text-slate-300 shadow-[-4px_0_24px_rgba(0,0,0,0.4)] z-20">
+    <div 
+      className={`absolute right-0 top-0 bottom-0 z-30 w-80 sm:w-84 bg-[#0d1424]/95 backdrop-blur-xl border-l border-white/10 flex flex-col h-full p-4 select-none text-slate-300 shadow-[-8px_0_32px_rgba(0,0,0,0.6)] transition-all duration-300 ease-in-out ${
+        isInspectorOpen 
+          ? 'translate-x-0 opacity-100 pointer-events-auto' 
+          : 'translate-x-full opacity-0 pointer-events-none'
+      }`}
+    >
       {/* Inspector Header */}
       <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
         <div>
@@ -113,6 +136,13 @@ export const ComponentInspector: React.FC = () => {
             className="p-2 rounded-xl bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800/80 shadow-clay-btn transition-all"
           >
             <Trash2 className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={toggleInspector}
+            className="p-2 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white transition-all shadow-clay-btn"
+            title="Close Inspector"
+          >
+            <X className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>

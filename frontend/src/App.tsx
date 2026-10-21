@@ -19,15 +19,15 @@ export const App: React.FC = () => {
       {/* Top Engineering Toolbar */}
       <TopNavbar />
 
-      {/* Center Integrated Engineering Workspace */}
-      <div className="flex flex-1 overflow-hidden relative">
-        {/* Left: Component & Board Catalog */}
-        <ComponentLibrary />
-
-        {/* Center: Interactive Schematic & Netlist Canvas */}
+      {/* Center Integrated Engineering Workspace (Full-bleed schematic with sliding clay drawers) */}
+      <div className="flex flex-1 overflow-hidden relative w-full h-full">
+        {/* Full-bleed Interactive Schematic & Netlist Canvas */}
         <CircuitCanvas />
 
-        {/* Right: Selected Component Properties & Live Controls */}
+        {/* Left: Sliding Claymorphic Component & Board Catalog Drawer */}
+        <ComponentLibrary />
+
+        {/* Right: Sliding Claymorphic Component Properties & Live Telemetry Drawer */}
         <ComponentInspector />
       </div>
 

@@ -199,8 +199,8 @@ export const CircuitCanvas: React.FC = () => {
         </div>
       )}
 
-      {/* Floating Zoom & View Controls */}
-      <div className="absolute top-4 right-4 z-30 flex items-center space-x-1 bg-[#12192c]/90 border border-white/[0.1] rounded-2xl p-1.5 backdrop-blur shadow-clay-card">
+      {/* Floating Zoom & View Controls (Centered Pill at top of canvas) */}
+      <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-1 bg-[#12192c]/95 border border-white/[0.1] rounded-2xl p-1.5 backdrop-blur shadow-clay-card">
         <button
           onClick={() => setZoom(Math.min(2.5, zoom + 0.15))}
           className="p-2 rounded-xl hover:bg-[#1a233d] text-slate-300 hover:text-white shadow-clay-btn transition-all"
@@ -329,7 +329,7 @@ export const CircuitCanvas: React.FC = () => {
               {/* 1. ESP32 DevKit V1 REALISTIC CLAYMORPHIC HARDWARE BOARD */}
               {/* ───────────────────────────────────────────────────────── */}
               {isESP32 ? (
-                <div className="w-[180px] h-[340px] clay-pcb relative flex flex-col items-center justify-between p-2 select-none overflow-hidden">
+                <div className="w-[200px] h-[340px] clay-pcb relative flex flex-col items-center justify-between p-2 select-none overflow-hidden">
                   {/* Gold Corner Mounting Holes */}
                   <div className="absolute top-2 left-2 w-3 h-3 rounded-full border-2 border-amber-500/80 bg-[#090e18] shadow-inner" />
                   <div className="absolute top-2 right-2 w-3 h-3 rounded-full border-2 border-amber-500/80 bg-[#090e18] shadow-inner" />
@@ -337,18 +337,18 @@ export const CircuitCanvas: React.FC = () => {
                   <div className="absolute bottom-2 right-2 w-3 h-3 rounded-full border-2 border-amber-500/80 bg-[#090e18] shadow-inner" />
 
                   {/* LEFT PIN HEADER SILKSCREEN LABELS */}
-                  <div className="absolute left-[28px] top-[37px] flex flex-col space-y-[9px] pointer-events-none z-0">
+                  <div className="absolute left-[26px] top-[37px] flex flex-col space-y-[9px] pointer-events-none z-0">
                     {boardMeta.pins.slice(0, 15).map(p => (
-                      <span key={p.id} className="text-[8px] font-mono font-bold text-slate-400 tracking-tight leading-none">
+                      <span key={p.id} className="text-[8px] font-mono font-bold text-slate-300 tracking-tight leading-none">
                         {p.label || p.name}
                       </span>
                     ))}
                   </div>
 
                   {/* RIGHT PIN HEADER SILKSCREEN LABELS */}
-                  <div className="absolute right-[28px] top-[37px] flex flex-col space-y-[9px] items-end pointer-events-none z-0">
+                  <div className="absolute right-[26px] top-[37px] flex flex-col space-y-[9px] items-end pointer-events-none z-0">
                     {boardMeta.pins.slice(15, 30).map(p => (
-                      <span key={p.id} className="text-[8px] font-mono font-bold text-slate-400 tracking-tight leading-none text-right">
+                      <span key={p.id} className="text-[8px] font-mono font-bold text-slate-300 tracking-tight leading-none text-right">
                         {p.label || p.name}
                       </span>
                     ))}
@@ -362,13 +362,13 @@ export const CircuitCanvas: React.FC = () => {
                   </div>
 
                   {/* ESP-WROOM-32 Metal RF Shield */}
-                  <div className="w-24 h-28 bg-gradient-to-b from-slate-200 via-slate-300 to-slate-400 rounded-lg border border-slate-300 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.8),inset_-2px_-2px_4px_rgba(0,0,0,0.3),2px_4px_10px_rgba(0,0,0,0.4)] flex flex-col items-center justify-center p-2 text-center text-slate-800 z-10">
-                    <div className="w-3 h-3 rounded-full border border-slate-500 absolute top-2 right-2 flex items-center justify-center text-[6px] font-bold">1</div>
-                    <span className="font-extrabold text-[10px] tracking-widest uppercase text-slate-900">ESPRESSIF</span>
-                    <span className="font-mono text-[9px] font-bold text-slate-800">ESP-WROOM-32</span>
-                    <div className="h-[1px] w-14 bg-slate-400 my-1" />
-                    <span className="text-[7px] text-slate-600 font-semibold">WiFi + BT + BLE</span>
-                    <span className="text-[6px] font-mono text-slate-500 mt-1">FCC ID: 2AC7Z-ESPWROOM32</span>
+                  <div className="w-[84px] h-28 bg-gradient-to-b from-slate-200 via-slate-300 to-slate-400 rounded-lg border border-slate-300 shadow-[inset_2px_2px_4px_rgba(255,255,255,0.8),inset_-2px_-2px_4px_rgba(0,0,0,0.3),2px_4px_10px_rgba(0,0,0,0.4)] flex flex-col items-center justify-center p-1.5 text-center text-slate-800 z-10">
+                    <div className="w-2.5 h-2.5 rounded-full border border-slate-500 absolute top-1.5 right-1.5 flex items-center justify-center text-[5px] font-bold">1</div>
+                    <span className="font-extrabold text-[9px] tracking-widest uppercase text-slate-900">ESPRESSIF</span>
+                    <span className="font-mono text-[8px] font-bold text-slate-800">ESP-WROOM-32</span>
+                    <div className="h-[1px] w-12 bg-slate-400 my-1" />
+                    <span className="text-[6.5px] text-slate-600 font-semibold">WiFi + BT + BLE</span>
+                    <span className="text-[5.5px] font-mono text-slate-500 mt-0.5">FCC: 2AC7Z-ESP32</span>
                   </div>
 
                   {/* Silabs CP2102 USB Bridge Chip */}
@@ -378,7 +378,7 @@ export const CircuitCanvas: React.FC = () => {
                   </div>
 
                   {/* Buttons & Status LEDs */}
-                  <div className="w-full flex items-center justify-between px-6 z-10">
+                  <div className="w-full flex items-center justify-between px-10 z-10">
                     {/* EN Button */}
                     <div className="flex flex-col items-center">
                       <div className="w-4 h-4 bg-slate-500 hover:bg-slate-400 active:bg-slate-600 rounded-sm border border-slate-300 shadow-clay-btn cursor-pointer" />

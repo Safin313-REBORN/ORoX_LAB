@@ -19,6 +19,9 @@ export const BottomPanel: React.FC = () => {
     setActiveTab,
     setActiveFile,
     updateFileContent,
+    isBottomOpen,
+    toggleBottom,
+    setBottomOpen,
     createFile,
     deleteFile,
     sendSerialInput,
@@ -26,7 +29,6 @@ export const BottomPanel: React.FC = () => {
   } = useRoboLabStore();
 
   const [serialInput, setSerialInput] = useState('');
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [baudRate, setBaudRate] = useState('115200');
   const [autoScroll, setAutoScroll] = useState(true);
 
@@ -160,7 +162,7 @@ export const BottomPanel: React.FC = () => {
     }
 
     setActiveTab('editor');
-    setIsCollapsed(false);
+    setBottomOpen(true);
 
     setTimeout(() => {
       if (editorRef.current) {
@@ -174,14 +176,14 @@ export const BottomPanel: React.FC = () => {
   };
 
   return (
-    <div className={`border-t border-white/[0.08] bg-[#0b101d] flex flex-col transition-all select-none shadow-[-4px_0_20px_rgba(0,0,0,0.5)] ${isCollapsed ? 'h-11' : 'h-80'}`}>
+    <div className={`border-t border-white/[0.08] bg-[#0b101d] flex flex-col transition-all select-none shadow-[-4px_0_20px_rgba(0,0,0,0.5)] ${!isBottomOpen ? 'h-11' : 'h-72'}`}>
       {/* Tab Navigation Header */}
       <div className="h-11 bg-[#0e1424] border-b border-white/[0.06] flex items-center justify-between px-3">
-        <div className="flex items-center space-x-1.5">
+        <div className="flex items-center space-x-1.5 overflow-x-auto custom-scrollbar py-1">
           <button
-            onClick={() => { setActiveTab('editor'); setIsCollapsed(false); }}
-            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              activeTab === 'editor' && !isCollapsed
+            onClick={() => { setActiveTab('editor'); setBottomOpen(true); }}
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 ${
+              activeTab === 'editor' && isBottomOpen
                 ? 'clay-btn-primary text-white shadow-clay-btn'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
             }`}
@@ -191,9 +193,9 @@ export const BottomPanel: React.FC = () => {
           </button>
 
           <button
-            onClick={() => { setActiveTab('serial'); setIsCollapsed(false); }}
-            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              activeTab === 'serial' && !isCollapsed
+            onClick={() => { setActiveTab('serial'); setBottomOpen(true); }}
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 ${
+              activeTab === 'serial' && isBottomOpen
                 ? 'clay-btn-primary text-white shadow-clay-btn'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
             }`}
@@ -206,9 +208,9 @@ export const BottomPanel: React.FC = () => {
           </button>
 
           <button
-            onClick={() => { setActiveTab('compiler'); setIsCollapsed(false); }}
-            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              activeTab === 'compiler' && !isCollapsed
+            onClick={() => { setActiveTab('compiler'); setBottomOpen(true); }}
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 ${
+              activeTab === 'compiler' && isBottomOpen
                 ? 'clay-btn-primary text-white shadow-clay-btn'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
             }`}
@@ -223,9 +225,9 @@ export const BottomPanel: React.FC = () => {
           </button>
 
           <button
-            onClick={() => { setActiveTab('instruments'); setIsCollapsed(false); }}
-            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              activeTab === 'instruments' && !isCollapsed
+            onClick={() => { setActiveTab('instruments'); setBottomOpen(true); }}
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 ${
+              activeTab === 'instruments' && isBottomOpen
                 ? 'clay-btn-primary text-white shadow-clay-btn'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
             }`}
@@ -235,9 +237,9 @@ export const BottomPanel: React.FC = () => {
           </button>
 
           <button
-            onClick={() => { setActiveTab('erc'); setIsCollapsed(false); }}
-            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              activeTab === 'erc' && !isCollapsed
+            onClick={() => { setActiveTab('erc'); setBottomOpen(true); }}
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 ${
+              activeTab === 'erc' && isBottomOpen
                 ? 'clay-btn-primary text-white shadow-clay-btn'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
             }`}
@@ -252,16 +254,16 @@ export const BottomPanel: React.FC = () => {
 
         {/* Collapse toggle button */}
         <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-1.5 rounded-xl bg-[#141b2e] hover:bg-[#1a243d] text-slate-400 hover:text-white border border-white/[0.06] shadow-clay-btn"
-          title={isCollapsed ? 'Expand Bottom Studio Panel' : 'Collapse Bottom Studio Panel'}
+          onClick={toggleBottom}
+          className="p-1.5 rounded-xl bg-[#141b2e] hover:bg-[#1a243d] text-slate-400 hover:text-white border border-white/[0.06] shadow-clay-btn ml-2 flex-shrink-0"
+          title={!isBottomOpen ? 'Expand Bottom Studio Panel' : 'Collapse Bottom Studio Panel'}
         >
-          {isCollapsed ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          {!isBottomOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </button>
       </div>
 
       {/* Panel Body */}
-      {!isCollapsed && (
+      {isBottomOpen && (
         <div className="flex-1 bg-[#090d18] overflow-hidden relative">
           {/* TAB 1: CODE EDITOR */}
           {activeTab === 'editor' && (

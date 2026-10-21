@@ -3,7 +3,7 @@ import { useRoboLabStore } from '../../store/useRoboLabStore';
 import { COMPONENT_CATALOG } from '../../simulation/models/componentRegistry';
 import { 
   Search, Plus, Cpu, Tv, Compass, ToggleLeft, Volume2, 
-  BatteryCharging, Zap, Sparkles, Box 
+  BatteryCharging, Zap, Sparkles, Box, X 
 } from 'lucide-react';
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
@@ -17,7 +17,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 };
 
 export const ComponentLibrary: React.FC = () => {
-  const { addComponent } = useRoboLabStore();
+  const { isLibraryOpen, toggleLibrary, addComponent } = useRoboLabStore();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
 
@@ -39,7 +39,13 @@ export const ComponentLibrary: React.FC = () => {
   });
 
   return (
-    <div className="w-72 bg-[#0d1322] border-r border-white/[0.06] flex flex-col h-full select-none text-slate-300 shadow-[4px_0_24px_rgba(0,0,0,0.4)] z-20">
+    <div 
+      className={`absolute left-0 top-0 bottom-0 z-30 w-72 sm:w-80 bg-[#0d1424]/95 backdrop-blur-xl border-r border-white/10 flex flex-col h-full select-none text-slate-300 shadow-[8px_0_32px_rgba(0,0,0,0.6)] transition-all duration-300 ease-in-out ${
+        isLibraryOpen 
+          ? 'translate-x-0 opacity-100 pointer-events-auto' 
+          : '-translate-x-full opacity-0 pointer-events-none'
+      }`}
+    >
       {/* Header & Search Bar */}
       <div className="p-3.5 border-b border-white/[0.06] space-y-2.5">
         <div className="flex items-center justify-between">
@@ -51,9 +57,18 @@ export const ComponentLibrary: React.FC = () => {
               Parts Library
             </h2>
           </div>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#161f36] text-slate-400 border border-white/[0.05]">
-            {items.length} parts
-          </span>
+          <div className="flex items-center space-x-1.5">
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#161f36] text-slate-400 border border-white/[0.05]">
+              {items.length} parts
+            </span>
+            <button
+              onClick={toggleLibrary}
+              className="p-1 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white transition-all shadow-clay-btn"
+              title="Close Parts Library"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
         {/* Search Input with Clay Inset */}

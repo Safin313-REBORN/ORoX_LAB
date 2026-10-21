@@ -25,6 +25,11 @@ export interface RoboLabStore {
   simulationTelemetry: SimulationTelemetry;
   diagnostics: ElectricalDiagnostic[];
 
+  // Drawer & Panel Layout state
+  isLibraryOpen: boolean;
+  isInspectorOpen: boolean;
+  isBottomOpen: boolean;
+
   // Undo / Redo history
   history: RoboLabProject[];
   historyIndex: number;
@@ -36,6 +41,12 @@ export interface RoboLabStore {
   setActiveTab: (tab: 'editor' | 'serial' | 'compiler' | 'instruments' | 'erc') => void;
   setZoom: (zoom: number) => void;
   setPan: (pan: { x: number; y: number }) => void;
+  toggleLibrary: () => void;
+  toggleInspector: () => void;
+  toggleBottom: () => void;
+  setLibraryOpen: (open: boolean) => void;
+  setInspectorOpen: (open: boolean) => void;
+  setBottomOpen: (open: boolean) => void;
 
   // Canvas Actions
   addComponent: (type: string, x: number, y: number) => void;
@@ -115,6 +126,17 @@ export const useRoboLabStore = create<RoboLabStore>((set, get) => {
     diagnostics: [],
     history: [JSON.parse(JSON.stringify(initialProject))],
     historyIndex: 0,
+
+    isLibraryOpen: false,
+    isInspectorOpen: false,
+    isBottomOpen: false,
+
+    toggleLibrary: () => set({ isLibraryOpen: !get().isLibraryOpen }),
+    toggleInspector: () => set({ isInspectorOpen: !get().isInspectorOpen }),
+    toggleBottom: () => set({ isBottomOpen: !get().isBottomOpen }),
+    setLibraryOpen: (open) => set({ isLibraryOpen: open }),
+    setInspectorOpen: (open) => set({ isInspectorOpen: open }),
+    setBottomOpen: (open) => set({ isBottomOpen: open }),
 
     setBoard: (boardId: string) => {
       const p = { ...get().project, boardId };
@@ -253,7 +275,11 @@ export const useRoboLabStore = create<RoboLabStore>((set, get) => {
       set({ project: { ...get().project, wires } });
     },
 
-    selectComponent: (id) => set({ selectedComponentId: id, selectedWireId: null }),
+    selectComponent: (id) => set({ 
+      selectedComponentId: id, 
+      selectedWireId: null,
+      isInspectorOpen: id !== null ? true : get().isInspectorOpen
+    }),
     selectWire: (id) => set({ selectedWireId: id, selectedComponentId: null }),
 
     setActiveFile: (fileId) => set({ activeFileId: fileId }),
@@ -361,10 +387,10 @@ export const useRoboLabStore = create<RoboLabStore>((set, get) => {
           const cacheMsg = data.from_cache ? ' (Cached ⚡)' : '';
           engine.logSerial(`[Compiler] Build SUCCEEDED in ${Math.round(data.duration_ms)}ms${cacheMsg}. Flash binary ready.`);
           engine.startSimulation(get().project);
-          set({ simulationStatus: 'running', activeTab: 'serial' });
+          set({ simulationStatus: 'running', activeTab: 'serial', isBottomOpen: true });
         } else {
           engine.logSerial('[Compiler] Build FAILED with ' + data.errors.length + ' error(s).');
-          set({ simulationStatus: 'error', activeTab: 'compiler' });
+          set({ simulationStatus: 'error', activeTab: 'compiler', isBottomOpen: true });
         }
       } catch (err: any) {
         console.error('Compile error:', err);
@@ -375,7 +401,7 @@ export const useRoboLabStore = create<RoboLabStore>((set, get) => {
         });
         engine.logSerial('[RoboLab] Build verified. Starting simulation session...');
         engine.startSimulation(get().project);
-        set({ simulationStatus: 'running', activeTab: 'serial' });
+        set({ simulationStatus: 'running', activeTab: 'serial', isBottomOpen: true });
       }
     },
 

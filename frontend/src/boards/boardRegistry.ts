@@ -31,7 +31,7 @@ function createEsp32DevKitV1Pins(): ComponentPin[] {
   const startY = 44;
   const pinSpacing = 18;
   const leftX = 14;
-  const rightX = 166;
+  const rightX = 186;
 
   // Left side pins (1 to 15)
   const leftDefinitions = [
@@ -114,7 +114,7 @@ export const BOARD_DEFINITIONS: Record<string, BoardProfileFrontend> = {
     module: 'ESP-WROOM-32',
     fqbn: 'esp32:esp32:esp32doit-devkit-v1',
     supportStatus: 'fully_tested',
-    width: 180,
+    width: 200,
     height: 340,
     voltageOperating: 3.3,
     builtinLedGpio: 2,

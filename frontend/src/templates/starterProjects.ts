@@ -39,8 +39,8 @@ export const STARTER_PROJECTS: ProjectTemplateMeta[] = [
           id: 'esp32_1',
           type: 'esp32doit-devkit-v1',
           name: 'ESP32 DevKit V1',
-          x: 200,
-          y: 80,
+          x: 100,
+          y: 50,
           rotation: 0,
           properties: {},
           state: {}
@@ -49,8 +49,8 @@ export const STARTER_PROJECTS: ProjectTemplateMeta[] = [
           id: 'led_1',
           type: 'led',
           name: 'LED (External Red)',
-          x: 440,
-          y: 120,
+          x: 360,
+          y: 90,
           rotation: 0,
           properties: { color: '#ef4444' },
           state: { illuminated: false }
@@ -59,9 +59,9 @@ export const STARTER_PROJECTS: ProjectTemplateMeta[] = [
           id: 'res_1',
           type: 'resistor',
           name: 'R1 (220 Ohm)',
-          x: 440,
+          x: 340,
           y: 200,
-          rotation: 90,
+          rotation: 0,
           properties: { resistance: 220 },
           state: {}
         }
