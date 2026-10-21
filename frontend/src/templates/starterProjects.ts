@@ -1,4 +1,4 @@
-import { RoboLabProject } from '../types/circuit';
+import { ORoXLABProject } from '../types/circuit';
 
 export interface ProjectTemplateMeta {
   id: string;
@@ -9,7 +9,7 @@ export interface ProjectTemplateMeta {
   expectedResults: string;
   executionMode: 'modeA' | 'modeB' | 'modeC';
   testStatus: 'verified' | 'unverified';
-  project: RoboLabProject;
+  project: ORoXLABProject;
 }
 
 export const STARTER_PROJECTS: ProjectTemplateMeta[] = [
@@ -91,7 +91,7 @@ export const STARTER_PROJECTS: ProjectTemplateMeta[] = [
           id: 'main_ino',
           name: 'sketch.ino',
           content: `// Project 1: ESP32 Blink Test
-// Author: RoboLab Engineering Team
+// Author: ORoXLAB Engineering Team
 #define LED_BUILTIN 2
 #define LED_EXTERNAL 4
 
@@ -99,7 +99,7 @@ void setup() {
   Serial.begin(115200);
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(LED_EXTERNAL, OUTPUT);
-  Serial.println("[RoboLab] ESP32 Blink Initialized.");
+  Serial.println("[ORoXLAB] ESP32 Blink Initialized.");
 }
 
 void loop() {
@@ -195,12 +195,12 @@ void setup() {
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE);
   display.setCursor(10, 10);
-  display.println(F("ROBOLAB ESP32"));
+  display.println(F("ORoXLAB ESP32"));
   display.setCursor(10, 26);
   display.println(F("SSD1306 OLED I2C"));
   display.drawRect(4, 4, 120, 56, SSD1306_WHITE);
   display.display();
-  Serial.println("[RoboLab] OLED Display ready.");
+  Serial.println("[ORoXLAB] OLED Display ready.");
 }
 
 void loop() {
@@ -258,7 +258,7 @@ int lastState = HIGH;
 void setup() {
   Serial.begin(115200);
   pinMode(BUTTON_PIN, INPUT_PULLUP);
-  Serial.println("[RoboLab] Push Button Monitor Active on GPIO15.");
+  Serial.println("[ORoXLAB] Push Button Monitor Active on GPIO15.");
 }
 
 void loop() {
@@ -399,7 +399,7 @@ void setup() {
   Serial.begin(115200);
   pinMode(TOUCH_PIN, INPUT);
   pinMode(BUZZER_PIN, OUTPUT);
-  Serial.println("[RoboLab] Touch-to-Buzzer Ready.");
+  Serial.println("[ORoXLAB] Touch-to-Buzzer Ready.");
 }
 
 void loop() {
@@ -465,7 +465,7 @@ void loop() {
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("[RoboLab] Initializing I2S Audio Pipeline...");
+  Serial.println("[ORoXLAB] Initializing I2S Audio Pipeline...");
 
   i2s_config_t i2s_config = {
     .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX),
@@ -487,7 +487,7 @@ void setup() {
 
   i2s_driver_install(I2S_NUM_0, &i2s_config, 0, NULL);
   i2s_set_pin(I2S_NUM_0, &pin_config);
-  Serial.println("[RoboLab] I2S DMA Driver Running.");
+  Serial.println("[ORoXLAB] I2S DMA Driver Running.");
 }
 
 void loop() {
@@ -539,7 +539,7 @@ void loop() {
 void setup() {
   Serial.begin(115200);
   analogReadResolution(12); // 12-bit ADC (0 - 4095)
-  Serial.println("[RoboLab] Battery Health Monitor Running.");
+  Serial.println("[ORoXLAB] Battery Health Monitor Running.");
 }
 
 void loop() {
@@ -569,7 +569,7 @@ void loop() {
     testStatus: 'verified',
     project: {
       id: 'p8_combined_robotics',
-      name: 'RoboLab Autonomous Bot Core',
+      name: 'ORoXLAB Autonomous Bot Core',
       schemaVersion: 1,
       boardId: 'esp32doit-devkit-v1',
       framework: 'arduino',
@@ -637,11 +637,11 @@ void setup() {
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE);
   display.setCursor(8, 8);
-  display.println(F("ROBOLAB BOT CORE"));
+  display.println(F("ORoXLAB BOT CORE"));
   display.setCursor(8, 24);
   display.println(F("ALL SYSTEMS ONLINE"));
   display.display();
-  Serial.println("[SYSTEM] RoboLab Autonomous Bot Core Initialized.");
+  Serial.println("[SYSTEM] ORoXLAB Autonomous Bot Core Initialized.");
 }
 
 void loop() {
@@ -711,7 +711,7 @@ void loop() {
           id: 'main_ino',
           name: 'sketch.ino',
           content: `// Project 9: L298N Autonomous Differential Drive Rover
-// Author: RoboLab Mechatronics Team
+// Author: ORoXLAB Mechatronics Team
 
 #define ENA_PIN 25  // Motor A Speed PWM
 #define IN1_PIN 26  // Motor A Dir 1
@@ -826,7 +826,7 @@ void loop() {
           id: 'main_ino',
           name: 'sketch.ino',
           content: `// Project 10: TCRT5000 Smart Line Follower Robot
-// Author: RoboLab Autonomous Systems Lab
+// Author: ORoXLAB Autonomous Systems Lab
 
 #define SENSOR_LEFT_PIN  14  // DO from Left TCRT5000
 #define SENSOR_RIGHT_PIN 12  // DO from Right TCRT5000

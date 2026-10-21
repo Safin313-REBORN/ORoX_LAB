@@ -4,7 +4,7 @@ import { useRoboLabStore } from '../../store/useRoboLabStore';
 import { 
   Terminal, Code2, Activity, ShieldAlert, Cpu, 
   Trash2, Send, Plus, ChevronUp, ChevronDown, CheckCircle, AlertTriangle, XCircle,
-  Download, ArrowRight, Calculator 
+  Download, ArrowRight, Calculator, Maximize2, Minimize2 
 } from 'lucide-react';
 import { RoboticsFormulasStudio } from '../robotics/RoboticsFormulasStudio';
 
@@ -32,6 +32,7 @@ export const BottomPanel: React.FC = () => {
   const [serialInput, setSerialInput] = useState('');
   const [baudRate, setBaudRate] = useState('115200');
   const [autoScroll, setAutoScroll] = useState(true);
+  const [isMaximized, setIsMaximized] = useState(false);
 
   const serialEndRef = useRef<HTMLDivElement>(null);
   const logicCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -146,7 +147,7 @@ export const BottomPanel: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `robolab_serial_${Date.now()}.log`;
+    a.download = `oroxlab_serial_${Date.now()}.log`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -177,32 +178,40 @@ export const BottomPanel: React.FC = () => {
   };
 
   return (
-    <div className={`border-t border-white/[0.08] bg-[#0b101d] flex flex-col transition-all select-none shadow-[-4px_0_20px_rgba(0,0,0,0.5)] ${!isBottomOpen ? 'h-11' : activeTab === 'formulas' ? 'h-[440px]' : 'h-72'}`}>
+    <div className={`border-t border-white/[0.08] bg-[#0b101d] flex flex-col transition-all duration-300 select-none shadow-[-4px_0_24px_rgba(0,0,0,0.6)] z-20 ${
+      !isBottomOpen 
+        ? 'h-11' 
+        : isMaximized 
+          ? 'h-[75vh] sm:h-[82vh]' 
+          : activeTab === 'formulas' 
+            ? 'h-[440px]' 
+            : 'h-72 sm:h-80'
+    }`}>
       {/* Tab Navigation Header */}
-      <div className="h-11 bg-[#0e1424] border-b border-white/[0.06] flex items-center justify-between px-3">
-        <div className="flex items-center space-x-1.5 overflow-x-auto custom-scrollbar py-1">
+      <div className="h-11 bg-[#0e1424] border-b border-white/[0.06] flex items-center justify-between px-2 sm:px-3">
+        <div className="flex items-center space-x-1 sm:space-x-1.5 overflow-x-auto custom-scrollbar py-1 min-w-0">
           <button
             onClick={() => { setActiveTab('editor'); setBottomOpen(true); }}
-            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 ${
+            className={`flex items-center space-x-1.5 sm:space-x-2 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 active:scale-95 ${
               activeTab === 'editor' && isBottomOpen
                 ? 'clay-btn-primary text-white shadow-clay-btn'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
             }`}
           >
-            <Code2 className="w-3.5 h-3.5" />
-            <span>Firmware Editor</span>
+            <Code2 className="w-3.5 h-3.5 text-cyan-400" />
+            <span><span className="hidden sm:inline">Firmware </span>Editor</span>
           </button>
 
           <button
             onClick={() => { setActiveTab('serial'); setBottomOpen(true); }}
-            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 ${
+            className={`flex items-center space-x-1.5 sm:space-x-2 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 active:scale-95 ${
               activeTab === 'serial' && isBottomOpen
                 ? 'clay-btn-primary text-white shadow-clay-btn'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
             }`}
           >
-            <Terminal className="w-3.5 h-3.5" />
-            <span>Serial Monitor</span>
+            <Terminal className="w-3.5 h-3.5 text-emerald-400" />
+            <span><span className="hidden sm:inline">Serial </span>Monitor</span>
             {simulationTelemetry.serialLogs.length > 0 && (
               <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#38bdf8]" />
             )}
@@ -210,14 +219,14 @@ export const BottomPanel: React.FC = () => {
 
           <button
             onClick={() => { setActiveTab('compiler'); setBottomOpen(true); }}
-            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 ${
+            className={`flex items-center space-x-1.5 sm:space-x-2 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 active:scale-95 ${
               activeTab === 'compiler' && isBottomOpen
                 ? 'clay-btn-primary text-white shadow-clay-btn'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
             }`}
           >
-            <Cpu className="w-3.5 h-3.5" />
-            <span>Compiler Output</span>
+            <Cpu className="w-3.5 h-3.5 text-blue-400" />
+            <span><span className="hidden sm:inline">Compiler </span>Output</span>
             {compileErrors.length > 0 && (
               <span className="px-1.5 py-0.2 rounded-full bg-rose-950 text-rose-300 font-bold text-[9px] border border-rose-800">
                 {compileErrors.length}
@@ -227,26 +236,26 @@ export const BottomPanel: React.FC = () => {
 
           <button
             onClick={() => { setActiveTab('instruments'); setBottomOpen(true); }}
-            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 ${
+            className={`flex items-center space-x-1.5 sm:space-x-2 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 active:scale-95 ${
               activeTab === 'instruments' && isBottomOpen
                 ? 'clay-btn-primary text-white shadow-clay-btn'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
             }`}
           >
-            <Activity className="w-3.5 h-3.5" />
-            <span>Logic Analyzer</span>
+            <Activity className="w-3.5 h-3.5 text-purple-400" />
+            <span>Logic<span className="hidden sm:inline"> Analyzer</span></span>
           </button>
 
           <button
             onClick={() => { setActiveTab('erc'); setBottomOpen(true); }}
-            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 ${
+            className={`flex items-center space-x-1.5 sm:space-x-2 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 active:scale-95 ${
               activeTab === 'erc' && isBottomOpen
                 ? 'clay-btn-primary text-white shadow-clay-btn'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
             }`}
           >
-            <ShieldAlert className="w-3.5 h-3.5" />
-            <span>Electrical Diagnostics</span>
+            <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
+            <span><span className="hidden sm:inline">Electrical </span>Diagnostics</span>
             {diagnostics.some(d => d.severity === 'error') && (
               <span className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_#f43f5e]" />
             )}
@@ -254,25 +263,39 @@ export const BottomPanel: React.FC = () => {
 
           <button
             onClick={() => { setActiveTab('formulas'); setBottomOpen(true); }}
-            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 ${
+            className={`flex items-center space-x-1.5 sm:space-x-2 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex-shrink-0 active:scale-95 ${
               activeTab === 'formulas' && isBottomOpen
                 ? 'clay-btn-primary text-white shadow-clay-btn'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
             }`}
           >
             <Calculator className="w-3.5 h-3.5 text-amber-400" />
-            <span>Robotics Laws & Math</span>
+            <span>Laws<span className="hidden sm:inline"> & Math</span></span>
           </button>
         </div>
 
-        {/* Collapse toggle button */}
-        <button
-          onClick={toggleBottom}
-          className="p-1.5 rounded-xl bg-[#141b2e] hover:bg-[#1a243d] text-slate-400 hover:text-white border border-white/[0.06] shadow-clay-btn ml-2 flex-shrink-0"
-          title={!isBottomOpen ? 'Expand Bottom Studio Panel' : 'Collapse Bottom Studio Panel'}
-        >
-          {!isBottomOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-        </button>
+        {/* Action Controls: Maximize/Restore & Collapse/Expand */}
+        <div className="flex items-center space-x-1 flex-shrink-0 ml-1">
+          {isBottomOpen && (
+            <button
+              onClick={() => setIsMaximized(!isMaximized)}
+              className="p-1.5 rounded-xl bg-[#141b2e] hover:bg-[#1a243d] text-slate-400 hover:text-cyan-400 border border-white/[0.06] shadow-clay-btn transition-all active:scale-95"
+              title={isMaximized ? 'Restore Default Height' : 'Maximize Panel (Full Screen)'}
+              aria-label={isMaximized ? 'Restore Panel' : 'Maximize Panel'}
+            >
+              {isMaximized ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+            </button>
+          )}
+
+          <button
+            onClick={toggleBottom}
+            className="p-1.5 rounded-xl bg-[#141b2e] hover:bg-[#1a243d] text-slate-400 hover:text-white border border-white/[0.06] shadow-clay-btn transition-all active:scale-95"
+            title={!isBottomOpen ? 'Expand Bottom Studio Panel' : 'Collapse Bottom Studio Panel'}
+            aria-label={!isBottomOpen ? 'Expand Panel' : 'Collapse Panel'}
+          >
+            {!isBottomOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          </button>
+        </div>
       </div>
 
       {/* Panel Body */}

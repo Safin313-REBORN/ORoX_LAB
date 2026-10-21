@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes import compile, boards, simulation
 
 app = FastAPI(
-    title="RoboLab — Virtual Robotics & Embedded Systems API",
+    title="ORoXLAB — Virtual Robotics & Embedded Systems API",
     version="1.0.0",
     description="Backend services for compiling ESP32 firmware, managing board profiles, and streaming simulation runtime events."
 )
@@ -25,7 +25,7 @@ app.include_router(simulation.router)
 @app.get("/")
 async def root():
     return {
-        "app": "RoboLab API",
+        "app": "ORoXLAB API",
         "version": "1.0.0",
         "status": "operational",
         "docs_url": "/docs"

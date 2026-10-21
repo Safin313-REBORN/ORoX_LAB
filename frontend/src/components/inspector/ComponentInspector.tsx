@@ -27,7 +27,7 @@ export const ComponentInspector: React.FC = () => {
     const board = BOARD_DEFINITIONS[project.boardId] || BOARD_DEFINITIONS['esp32doit-devkit-v1'];
     return (
       <div 
-        className={`absolute right-0 top-0 bottom-0 z-30 w-80 sm:w-84 bg-[#0d1424]/95 backdrop-blur-xl border-l border-white/10 flex flex-col h-full p-4 select-none text-slate-300 shadow-[-8px_0_32px_rgba(0,0,0,0.6)] transition-all duration-300 ease-in-out ${
+        className={`absolute right-0 top-0 bottom-0 z-30 w-72 sm:w-84 max-w-[88vw] bg-[#0d1424]/95 backdrop-blur-xl border-l border-white/10 flex flex-col h-full p-3.5 sm:p-4 select-none text-slate-300 shadow-[-8px_0_32px_rgba(0,0,0,0.6)] transition-all duration-300 ease-in-out ${
           isInspectorOpen 
             ? 'translate-x-0 opacity-100 pointer-events-auto' 
             : 'translate-x-full opacity-0 pointer-events-none'
@@ -110,7 +110,7 @@ export const ComponentInspector: React.FC = () => {
 
   return (
     <div 
-      className={`absolute right-0 top-0 bottom-0 z-30 w-80 sm:w-84 bg-[#0d1424]/95 backdrop-blur-xl border-l border-white/10 flex flex-col h-full p-4 select-none text-slate-300 shadow-[-8px_0_32px_rgba(0,0,0,0.6)] transition-all duration-300 ease-in-out ${
+      className={`absolute right-0 top-0 bottom-0 z-30 w-72 sm:w-84 max-w-[88vw] bg-[#0d1424]/95 backdrop-blur-xl border-l border-white/10 flex flex-col h-full p-3.5 sm:p-4 select-none text-slate-300 shadow-[-8px_0_32px_rgba(0,0,0,0.6)] transition-all duration-300 ease-in-out ${
         isInspectorOpen 
           ? 'translate-x-0 opacity-100 pointer-events-auto' 
           : 'translate-x-full opacity-0 pointer-events-none'

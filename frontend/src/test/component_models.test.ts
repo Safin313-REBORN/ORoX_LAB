@@ -30,7 +30,7 @@ describe('SSD1306 OLED Model', () => {
 
   it('renders ASCII text characters into framebuffer memory', () => {
     const oled = new SSD1306Model(128, 64);
-    oled.drawText('ROBOLAB', 0, 0, true);
+    oled.drawText('ORoXLAB', 0, 0, true);
 
     // Buffer should now have non-zero pixels
     const nonZeroCount = oled.buffer.filter(b => b > 0).length;

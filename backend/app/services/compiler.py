@@ -85,7 +85,7 @@ class CompilationCache:
                 # Cache hit!
                 return CompileResult(
                     success=result.success,
-                    output=result.output + "\n[RoboLab Cache] Instant build hit (0s).",
+                    output=result.output + "\n[ORoXLAB Cache] Instant build hit (0s).",
                     errors=result.errors,
                     warnings=result.warnings,
                     binaries=result.binaries,
@@ -239,6 +239,15 @@ async def compile_sketch(
             duration_ms = (asyncio.get_event_loop().time() - start_time) * 1000
             success = (proc.returncode == 0)
             errors, warnings = parse_compiler_diagnostics(raw_output)
+
+            if not success and len(errors) == 0:
+                errors.append({
+                    "file": "sketch.ino",
+                    "line": 1,
+                    "column": 1,
+                    "message": raw_output.strip().splitlines()[-1] if raw_output.strip() else "Compilation failed.",
+                    "severity": "error"
+                })
 
             # Collect binaries
             binaries: Dict[str, Any] = {}

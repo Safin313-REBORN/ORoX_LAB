@@ -43,7 +43,7 @@ export const ComponentLibrary: React.FC = () => {
 
   return (
     <div 
-      className={`absolute left-0 top-0 bottom-0 z-30 w-72 sm:w-80 bg-[#0d1424]/95 backdrop-blur-xl border-r border-white/10 flex flex-col h-full select-none text-slate-300 shadow-[8px_0_32px_rgba(0,0,0,0.6)] transition-all duration-300 ease-in-out ${
+      className={`absolute left-0 top-0 bottom-0 z-30 w-72 sm:w-80 max-w-[88vw] bg-[#0d1424]/95 backdrop-blur-xl border-r border-white/10 flex flex-col h-full select-none text-slate-300 shadow-[8px_0_32px_rgba(0,0,0,0.6)] transition-all duration-300 ease-in-out ${
         isLibraryOpen 
           ? 'translate-x-0 opacity-100 pointer-events-auto' 
           : '-translate-x-full opacity-0 pointer-events-none'

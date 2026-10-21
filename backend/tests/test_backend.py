@@ -8,7 +8,7 @@ def test_root_endpoint():
     response = client.get("/")
     assert response.status_code == 200
     data = response.json()
-    assert data["app"] == "RoboLab API"
+    assert data["app"] == "ORoXLAB API"
     assert data["status"] == "operational"
 
 def test_health_endpoint():

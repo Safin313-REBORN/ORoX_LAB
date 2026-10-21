@@ -359,7 +359,7 @@ export const useRoboLabStore = create<RoboLabStore>((set, get) => {
           activeTab: 'erc',
           simulationStatus: 'error'
         });
-        engine.logSerial('[RoboLab] Cannot compile: Circuit has blocking electrical errors. Check Electrical Diagnostics tab.');
+        engine.logSerial('[ORoXLAB] Cannot compile: Circuit has blocking electrical errors. Check Electrical Diagnostics tab.');
         return;
       }
 
@@ -405,7 +405,7 @@ export const useRoboLabStore = create<RoboLabStore>((set, get) => {
           compileOutput: `[Local Simulation Engine]\nVerified sketch syntax.\nTarget: ${state.project.boardId}\nMemory: 271,824 bytes (20% flash).`,
           compileErrors: []
         });
-        engine.logSerial('[RoboLab] Build verified. Starting simulation session...');
+        engine.logSerial('[ORoXLAB] Build verified. Starting simulation session...');
         engine.startSimulation(get().project);
         set({ simulationStatus: 'running', activeTab: 'serial', isBottomOpen: true });
       }

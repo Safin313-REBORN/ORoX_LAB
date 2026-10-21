@@ -117,6 +117,26 @@ export const CircuitCanvas: React.FC = () => {
     setDraggingCompId(null);
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      setIsPanning(true);
+      setPanStart({ x: touch.clientX - pan.x, y: touch.clientY - pan.y });
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (isPanning && e.touches.length === 1) {
+      const touch = e.touches[0];
+      setPan({ x: touch.clientX - panStart.x, y: touch.clientY - panStart.y });
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsPanning(false);
+    setDraggingCompId(null);
+  };
+
   const handlePinClick = (comp: ComponentInstance, pin: ComponentPin, e: React.MouseEvent) => {
     e.stopPropagation();
     if (!wireStart) {
@@ -148,10 +168,13 @@ export const CircuitCanvas: React.FC = () => {
   return (
     <div
       ref={containerRef}
-      className="relative flex-1 h-full bg-[#0a0f1d] overflow-hidden select-none cursor-crosshair"
+      className="relative flex-1 h-full bg-[#0a0f1d] overflow-hidden select-none cursor-crosshair touch-none"
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       onWheel={(e) => {
         e.preventDefault();
         const delta = e.deltaY < 0 ? 0.15 : -0.15;
@@ -171,14 +194,14 @@ export const CircuitCanvas: React.FC = () => {
 
       {/* Selected Wire Action Bar */}
       {selectedWire && (
-        <div className="absolute top-4 left-4 z-30 flex items-center space-x-2 bg-[#12192c]/95 border border-white/[0.1] rounded-2xl p-2 backdrop-blur shadow-clay-card animate-fadeIn">
-          <span className="text-xs font-mono font-bold text-slate-300 pl-1">Wire Color:</span>
-          <div className="flex items-center space-x-1.5">
+        <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-30 flex items-center space-x-1.5 sm:space-x-2 bg-[#12192c]/95 border border-white/[0.1] rounded-2xl p-1.5 sm:p-2 backdrop-blur shadow-clay-card animate-fadeIn max-w-[90vw] overflow-x-auto">
+          <span className="text-[11px] sm:text-xs font-mono font-bold text-slate-300 pl-1 whitespace-nowrap">Wire Color:</span>
+          <div className="flex items-center space-x-1 sm:space-x-1.5">
             {WIRE_COLORS.map(c => (
               <button
                 key={c.hex}
                 onClick={() => updateWireColor(selectedWire.id, c.hex)}
-                className={`w-5 h-5 rounded-full transition-transform ${
+                className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full transition-transform ${
                   selectedWire.color === c.hex 
                     ? 'ring-2 ring-white scale-125 shadow-lg' 
                     : 'hover:scale-110 opacity-80 hover:opacity-100'
@@ -188,43 +211,43 @@ export const CircuitCanvas: React.FC = () => {
               />
             ))}
           </div>
-          <div className="h-5 w-[1px] bg-white/[0.1] mx-1" />
+          <div className="h-4 sm:h-5 w-[1px] bg-white/[0.1] mx-0.5 sm:mx-1 flex-shrink-0" />
           <button
             onClick={() => deleteWire(selectedWire.id)}
-            className="flex items-center space-x-1 px-2.5 py-1 rounded-xl text-xs bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800/80 shadow-clay-btn transition-all"
+            className="flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-xl text-xs bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800/80 shadow-clay-btn transition-all flex-shrink-0"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            <span>Delete</span>
+            <span className="hidden xs:inline">Delete</span>
           </button>
         </div>
       )}
 
       {/* Floating Zoom & View Controls (Centered Pill at top of canvas) */}
-      <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-1 bg-[#12192c]/95 border border-white/[0.1] rounded-2xl p-1.5 backdrop-blur shadow-clay-card">
+      <div className="absolute top-2.5 sm:top-3 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-0.5 sm:space-x-1 bg-[#12192c]/90 border border-white/[0.1] rounded-2xl p-1 sm:p-1.5 backdrop-blur shadow-clay-card">
         <button
           onClick={() => setZoom(Math.min(2.5, zoom + 0.15))}
-          className="p-2 rounded-xl hover:bg-[#1a233d] text-slate-300 hover:text-white shadow-clay-btn transition-all"
+          className="p-1.5 sm:p-2 rounded-xl hover:bg-[#1a233d] text-slate-300 hover:text-white shadow-clay-btn transition-all active:scale-95"
           title="Zoom In"
         >
-          <ZoomIn className="w-4 h-4" />
+          <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </button>
-        <span className="text-xs font-mono font-bold text-cyan-400 px-2 min-w-[50px] text-center">
+        <span className="text-[11px] sm:text-xs font-mono font-bold text-cyan-400 px-1 sm:px-2 min-w-[42px] sm:min-w-[50px] text-center">
           {Math.round(zoom * 100)}%
         </span>
         <button
           onClick={() => setZoom(Math.max(0.4, zoom - 0.15))}
-          className="p-2 rounded-xl hover:bg-[#1a233d] text-slate-300 hover:text-white shadow-clay-btn transition-all"
+          className="p-1.5 sm:p-2 rounded-xl hover:bg-[#1a233d] text-slate-300 hover:text-white shadow-clay-btn transition-all active:scale-95"
           title="Zoom Out"
         >
-          <ZoomOut className="w-4 h-4" />
+          <ZoomOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </button>
-        <div className="h-5 w-[1px] bg-white/[0.1] mx-1" />
+        <div className="h-4 sm:h-5 w-[1px] bg-white/[0.1] mx-0.5 sm:mx-1" />
         <button
           onClick={() => { setZoom(1.0); setPan({ x: 0, y: 0 }); }}
-          className="p-2 rounded-xl hover:bg-[#1a233d] text-slate-300 hover:text-white shadow-clay-btn transition-all"
+          className="p-1.5 sm:p-2 rounded-xl hover:bg-[#1a233d] text-slate-300 hover:text-white shadow-clay-btn transition-all active:scale-95"
           title="Reset to 100%"
         >
-          <Maximize2 className="w-4 h-4" />
+          <Maximize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </button>
       </div>
 

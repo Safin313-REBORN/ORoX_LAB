@@ -37,8 +37,8 @@ export const App: React.FC = () => {
 
       {/* Floating Robotics Engineering Laws & Formulas Modal */}
       {isFormulasOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-md animate-fadeIn">
-          <div className="w-full max-w-5xl h-[88vh] rounded-3xl overflow-hidden shadow-[0_25px_70px_rgba(0,0,0,0.8)] border border-white/10 flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/60 backdrop-blur-md animate-fadeIn">
+          <div className="w-full max-w-5xl h-[94vh] sm:h-[88vh] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_25px_70px_rgba(0,0,0,0.8)] border border-white/10 flex flex-col">
             <RoboticsFormulasStudio onClose={() => setFormulasOpen(false)} />
           </div>
         </div>

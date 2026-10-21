@@ -87,19 +87,19 @@ export const RoboticsFormulasStudio: React.FC<RoboticsFormulasStudioProps> = ({ 
   return (
     <div className="flex flex-col h-full bg-[#0a0f1d] text-slate-200 select-none overflow-hidden">
       {/* Studio Header */}
-      <div className="h-14 bg-[#0d1424] border-b border-white/[0.08] flex items-center justify-between px-4 sm:px-6 shadow-md z-10 flex-shrink-0">
-        <div className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex items-center justify-center font-bold shadow-clay-btn">
+      <div className="h-14 bg-[#0d1424] border-b border-white/[0.08] flex items-center justify-between px-3 sm:px-6 shadow-md z-10 flex-shrink-0">
+        <div className="flex items-center space-x-2 sm:space-x-2.5 min-w-0">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex items-center justify-center font-bold shadow-clay-btn flex-shrink-0">
             <Calculator className="w-4 h-4" />
           </div>
-          <div>
-            <h1 className="text-sm font-extrabold text-white tracking-wide font-sans flex items-center space-x-2">
-              <span>Robotics Engineering Laws & Formulas Studio</span>
-              <span className="text-[9px] uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 font-mono font-bold">
-                MATHEMATICAL ENGINE
+          <div className="min-w-0">
+            <h1 className="text-xs sm:text-sm font-extrabold text-white tracking-wide font-sans flex items-center space-x-1.5 sm:space-x-2">
+              <span className="truncate">ORoXLAB Robotics Laws & Math Studio</span>
+              <span className="hidden xs:inline-flex text-[9px] uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 font-mono font-bold flex-shrink-0">
+                PHYSICS ENGINE
               </span>
             </h1>
-            <p className="text-[10px] text-slate-400">
+            <p className="text-[10px] text-slate-400 truncate hidden xs:block">
               Interactive physics calculators, governing mechatronic laws & C++ kinematics implementations
             </p>
           </div>
@@ -108,7 +108,7 @@ export const RoboticsFormulasStudio: React.FC<RoboticsFormulasStudioProps> = ({ 
         {onClose && (
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white transition-all shadow-clay-btn"
+            className="p-1.5 rounded-xl hover:bg-white/10 text-slate-400 hover:text-white transition-all shadow-clay-btn flex-shrink-0 ml-2"
             title="Close Formulas Studio"
           >
             <X className="w-4 h-4" />

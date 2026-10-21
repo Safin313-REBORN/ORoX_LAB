@@ -120,3 +120,6 @@ export interface RoboLabProject {
   createdAt: string;
   updatedAt: string;
 }
+
+export type ORoXLABProject = RoboLabProject;
+
