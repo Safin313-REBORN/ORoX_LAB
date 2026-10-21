@@ -28,10 +28,10 @@ export interface BoardProfileFrontend {
 // Generate exact pin coordinates for ESP32 DevKit V1 (30-pin, 15 on left, 15 on right)
 function createEsp32DevKitV1Pins(): ComponentPin[] {
   const pins: ComponentPin[] = [];
-  const startY = 48;
-  const pinSpacing = 16;
-  const leftX = 8;
-  const rightX = 142;
+  const startY = 44;
+  const pinSpacing = 18;
+  const leftX = 14;
+  const rightX = 166;
 
   // Left side pins (1 to 15)
   const leftDefinitions = [
@@ -114,8 +114,8 @@ export const BOARD_DEFINITIONS: Record<string, BoardProfileFrontend> = {
     module: 'ESP-WROOM-32',
     fqbn: 'esp32:esp32:esp32doit-devkit-v1',
     supportStatus: 'fully_tested',
-    width: 150,
-    height: 300,
+    width: 180,
+    height: 340,
     voltageOperating: 3.3,
     builtinLedGpio: 2,
     builtinButtonGpio: 0,

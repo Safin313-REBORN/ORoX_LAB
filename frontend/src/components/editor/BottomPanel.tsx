@@ -73,11 +73,11 @@ export const BottomPanel: React.FC = () => {
 
       const w = canvas.width;
       const h = canvas.height;
-      ctx.fillStyle = '#090d16';
+      ctx.fillStyle = '#080d18';
       ctx.fillRect(0, 0, w, h);
 
-      // Draw grid
-      ctx.strokeStyle = '#1e293b';
+      // Draw subtle grid
+      ctx.strokeStyle = '#151e33';
       ctx.lineWidth = 1;
       for (let x = 0; x < w; x += 40) {
         ctx.beginPath();
@@ -100,25 +100,25 @@ export const BottomPanel: React.FC = () => {
         // Channel label
         ctx.fillStyle = '#94a3b8';
         ctx.font = '10px monospace';
-        ctx.fillText(ch, 10, yBase - 18);
+        ctx.fillText(ch, 12, yBase - 16);
 
         // Draw waveform
         ctx.strokeStyle = color;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 2.5;
         ctx.beginPath();
 
-        const stepX = (w - 120) / Math.max(1, traces.length - 1);
+        const stepX = (w - 140) / Math.max(1, traces.length - 1);
 
         traces.forEach((sample, sIdx) => {
           const val = sample.channels[ch] ?? 0;
-          const x = 110 + sIdx * stepX;
-          const y = val === 1 ? yBase - 14 : yBase;
+          const x = 120 + sIdx * stepX;
+          const y = val === 1 ? yBase - 16 : yBase;
 
           if (sIdx === 0) {
             ctx.moveTo(x, y);
           } else {
             const prevVal = traces[sIdx - 1].channels[ch] ?? 0;
-            const prevY = prevVal === 1 ? yBase - 14 : yBase;
+            const prevY = prevVal === 1 ? yBase - 16 : yBase;
             ctx.lineTo(x, prevY);
             ctx.lineTo(x, y);
           }
@@ -174,16 +174,16 @@ export const BottomPanel: React.FC = () => {
   };
 
   return (
-    <div className={`border-t border-slate-800 bg-slate-900 flex flex-col transition-all select-none ${isCollapsed ? 'h-9' : 'h-72'}`}>
+    <div className={`border-t border-white/[0.08] bg-[#0b101d] flex flex-col transition-all select-none shadow-[-4px_0_20px_rgba(0,0,0,0.5)] ${isCollapsed ? 'h-11' : 'h-80'}`}>
       {/* Tab Navigation Header */}
-      <div className="h-9 bg-slate-950 border-b border-slate-800 flex items-center justify-between px-3">
-        <div className="flex items-center space-x-1">
+      <div className="h-11 bg-[#0e1424] border-b border-white/[0.06] flex items-center justify-between px-3">
+        <div className="flex items-center space-x-1.5">
           <button
             onClick={() => { setActiveTab('editor'); setIsCollapsed(false); }}
-            className={`flex items-center space-x-1.5 px-3 py-1 text-xs font-medium rounded-t transition-colors ${
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
               activeTab === 'editor' && !isCollapsed
-                ? 'bg-slate-900 text-cyan-400 border-t-2 border-cyan-500'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
+                ? 'clay-btn-primary text-white shadow-clay-btn'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
             }`}
           >
             <Code2 className="w-3.5 h-3.5" />
@@ -192,31 +192,31 @@ export const BottomPanel: React.FC = () => {
 
           <button
             onClick={() => { setActiveTab('serial'); setIsCollapsed(false); }}
-            className={`flex items-center space-x-1.5 px-3 py-1 text-xs font-medium rounded-t transition-colors ${
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
               activeTab === 'serial' && !isCollapsed
-                ? 'bg-slate-900 text-cyan-400 border-t-2 border-cyan-500'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
+                ? 'clay-btn-primary text-white shadow-clay-btn'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
             }`}
           >
             <Terminal className="w-3.5 h-3.5" />
             <span>Serial Monitor</span>
             {simulationTelemetry.serialLogs.length > 0 && (
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+              <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#38bdf8]" />
             )}
           </button>
 
           <button
             onClick={() => { setActiveTab('compiler'); setIsCollapsed(false); }}
-            className={`flex items-center space-x-1.5 px-3 py-1 text-xs font-medium rounded-t transition-colors ${
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
               activeTab === 'compiler' && !isCollapsed
-                ? 'bg-slate-900 text-cyan-400 border-t-2 border-cyan-500'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
+                ? 'clay-btn-primary text-white shadow-clay-btn'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
             }`}
           >
             <Cpu className="w-3.5 h-3.5" />
             <span>Compiler Output</span>
             {compileErrors.length > 0 && (
-              <span className="px-1 py-0.2 rounded bg-red-950 text-red-400 font-bold text-[9px]">
+              <span className="px-1.5 py-0.2 rounded-full bg-rose-950 text-rose-300 font-bold text-[9px] border border-rose-800">
                 {compileErrors.length}
               </span>
             )}
@@ -224,10 +224,10 @@ export const BottomPanel: React.FC = () => {
 
           <button
             onClick={() => { setActiveTab('instruments'); setIsCollapsed(false); }}
-            className={`flex items-center space-x-1.5 px-3 py-1 text-xs font-medium rounded-t transition-colors ${
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
               activeTab === 'instruments' && !isCollapsed
-                ? 'bg-slate-900 text-cyan-400 border-t-2 border-cyan-500'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
+                ? 'clay-btn-primary text-white shadow-clay-btn'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
             }`}
           >
             <Activity className="w-3.5 h-3.5" />
@@ -236,25 +236,25 @@ export const BottomPanel: React.FC = () => {
 
           <button
             onClick={() => { setActiveTab('erc'); setIsCollapsed(false); }}
-            className={`flex items-center space-x-1.5 px-3 py-1 text-xs font-medium rounded-t transition-colors ${
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
               activeTab === 'erc' && !isCollapsed
-                ? 'bg-slate-900 text-cyan-400 border-t-2 border-cyan-500'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
+                ? 'clay-btn-primary text-white shadow-clay-btn'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
             }`}
           >
             <ShieldAlert className="w-3.5 h-3.5" />
             <span>Electrical Diagnostics</span>
             {diagnostics.some(d => d.severity === 'error') && (
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+              <span className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_#f43f5e]" />
             )}
           </button>
         </div>
 
-        {/* Collapse button */}
+        {/* Collapse toggle button */}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="text-slate-400 hover:text-white p-1"
-          title={isCollapsed ? 'Expand Panel' : 'Collapse Panel'}
+          className="p-1.5 rounded-xl bg-[#141b2e] hover:bg-[#1a243d] text-slate-400 hover:text-white border border-white/[0.06] shadow-clay-btn"
+          title={isCollapsed ? 'Expand Bottom Studio Panel' : 'Collapse Bottom Studio Panel'}
         >
           {isCollapsed ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </button>
@@ -262,20 +262,20 @@ export const BottomPanel: React.FC = () => {
 
       {/* Panel Body */}
       {!isCollapsed && (
-        <div className="flex-1 bg-slate-900 overflow-hidden relative">
+        <div className="flex-1 bg-[#090d18] overflow-hidden relative">
           {/* TAB 1: CODE EDITOR */}
           {activeTab === 'editor' && (
             <div className="flex flex-col h-full">
               {/* File Tabs */}
-              <div className="h-8 bg-slate-950/60 border-b border-slate-800 flex items-center px-2 space-x-1">
+              <div className="h-9 bg-[#0b101e] border-b border-white/[0.06] flex items-center px-3 space-x-1.5">
                 {project.files.map(f => (
                   <div
                     key={f.id}
                     onClick={() => setActiveFile(f.id)}
-                    className={`px-3 py-1 text-xs font-mono rounded-t flex items-center space-x-1.5 cursor-pointer ${
+                    className={`px-3 py-1 text-xs font-mono rounded-xl flex items-center space-x-2 cursor-pointer transition-all ${
                       activeFileId === f.id
-                        ? 'bg-slate-900 text-cyan-400 border-b-2 border-cyan-500'
-                        : 'text-slate-400 hover:text-slate-200'
+                        ? 'bg-[#18233a] text-cyan-300 border border-cyan-500/40 shadow-clay-pill font-bold'
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]'
                     }`}
                   >
                     <span>{f.name}</span>
@@ -287,7 +287,7 @@ export const BottomPanel: React.FC = () => {
                             deleteFile(f.id);
                           }
                         }}
-                        className="ml-1 text-slate-500 hover:text-red-400 text-xs px-0.5"
+                        className="ml-1 text-slate-500 hover:text-rose-400 text-xs px-0.5 rounded"
                         title="Delete file"
                       >
                         ×
@@ -297,11 +297,11 @@ export const BottomPanel: React.FC = () => {
                 ))}
                 <button
                   onClick={() => {
-                    const fname = prompt('Enter new file name (e.g. config.h):');
+                    const fname = prompt('Enter new sketch file name (e.g. config.h):');
                     if (fname) createFile(fname);
                   }}
-                  className="p-1 text-slate-500 hover:text-cyan-400 text-xs ml-1"
-                  title="Add File"
+                  className="p-1 rounded-lg text-slate-400 hover:text-cyan-400 text-xs ml-1 hover:bg-white/[0.04]"
+                  title="Add File to Sketch"
                 >
                   <Plus className="w-3.5 h-3.5" />
                 </button>
@@ -324,12 +324,13 @@ export const BottomPanel: React.FC = () => {
                     }
                   }}
                   options={{
-                    fontSize: 12,
+                    fontSize: 12.5,
                     fontFamily: 'JetBrains Mono, Menlo, monospace',
                     minimap: { enabled: false },
                     scrollBeyondLastLine: false,
                     automaticLayout: true,
-                    tabSize: 2
+                    tabSize: 2,
+                    lineNumbersMinChars: 3
                   }}
                 />
               </div>
@@ -338,30 +339,33 @@ export const BottomPanel: React.FC = () => {
 
           {/* TAB 2: SERIAL MONITOR */}
           {activeTab === 'serial' && (
-            <div className="flex flex-col h-full bg-[#090d16] font-mono text-xs">
-              <div className="flex items-center justify-between p-2 border-b border-slate-800 text-[11px] text-slate-400">
-                <div className="flex items-center space-x-2">
-                  <span>Port: /dev/ttyUSB0 (ESP32 UART0)</span>
-                  <div className="h-3 w-px bg-slate-800" />
-                  <span>Baud:</span>
-                  <select
-                    value={baudRate}
-                    onChange={(e) => setBaudRate(e.target.value)}
-                    className="bg-slate-900 text-cyan-400 text-xs rounded border border-slate-800 px-1.5 py-0.5 focus:outline-none"
-                  >
-                    <option value="115200">115200 baud</option>
-                    <option value="9600">9600 baud</option>
-                    <option value="57600">57600 baud</option>
-                  </select>
+            <div className="flex flex-col h-full bg-[#070b14] font-mono text-xs">
+              <div className="flex items-center justify-between p-2.5 border-b border-white/[0.06] text-[11px] text-slate-400 bg-[#0c1220]">
+                <div className="flex items-center space-x-3">
+                  <span className="font-semibold text-slate-300">ESP32 UART0 (/dev/ttyUSB0)</span>
+                  <div className="h-3 w-[1px] bg-white/[0.1]" />
+                  <div className="flex items-center space-x-1.5">
+                    <span>Baud:</span>
+                    <select
+                      value={baudRate}
+                      onChange={(e) => setBaudRate(e.target.value)}
+                      className="bg-[#12192c] text-cyan-400 text-xs rounded-lg border border-white/[0.08] px-2 py-0.5 focus:outline-none shadow-clay-card-sm"
+                    >
+                      <option value="115200">115200 baud</option>
+                      <option value="9600">9600 baud</option>
+                      <option value="57600">57600 baud</option>
+                    </select>
+                  </div>
                 </div>
+
                 <div className="flex items-center space-x-2">
                   <button
                     type="button"
                     onClick={() => setAutoScroll(!autoScroll)}
-                    className={`px-2 py-0.5 rounded border text-[10px] font-mono transition-colors ${
+                    className={`px-2.5 py-1 rounded-xl text-[10px] font-mono font-bold transition-all shadow-clay-btn ${
                       autoScroll 
-                        ? 'bg-cyan-950/60 border-cyan-800 text-cyan-400' 
-                        : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-slate-300'
+                        ? 'bg-cyan-950/80 border border-cyan-800 text-cyan-400' 
+                        : 'bg-[#141c2e] border border-white/[0.06] text-slate-500'
                     }`}
                     title={autoScroll ? 'Disable Auto-scroll' : 'Enable Auto-scroll'}
                   >
@@ -370,8 +374,8 @@ export const BottomPanel: React.FC = () => {
                   <button
                     type="button"
                     onClick={clearSerial}
-                    className="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded border border-slate-800 text-[10px] font-mono flex items-center space-x-1"
-                    title="Clear Serial Monitor"
+                    className="px-2.5 py-1 bg-[#141c2e] hover:bg-[#1a243a] text-slate-300 rounded-xl border border-white/[0.06] text-[10px] font-mono font-bold flex items-center space-x-1 shadow-clay-btn transition-all"
+                    title="Clear Serial Output"
                   >
                     <Trash2 className="w-3 h-3 text-slate-400" />
                     <span>Clear</span>
@@ -379,24 +383,24 @@ export const BottomPanel: React.FC = () => {
                   <button
                     type="button"
                     onClick={exportSerialLogs}
-                    className="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded border border-slate-800 text-[10px] font-mono flex items-center space-x-1"
-                    title="Export Serial Log to text file"
+                    className="px-2.5 py-1 bg-[#141c2e] hover:bg-[#1a243a] text-slate-300 rounded-xl border border-white/[0.06] text-[10px] font-mono font-bold flex items-center space-x-1 shadow-clay-btn transition-all"
+                    title="Export Logs to .log File"
                   >
                     <Download className="w-3 h-3 text-slate-400" />
                     <span>Export</span>
                   </button>
-                  <div className="h-3 w-px bg-slate-800" />
-                  <span className="text-[10px] text-emerald-400 flex items-center">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse" />
+                  <div className="h-3 w-[1px] bg-white/[0.1]" />
+                  <span className="text-[10px] text-emerald-400 font-bold flex items-center">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse" />
                     ONLINE
                   </span>
                 </div>
               </div>
 
-              {/* Serial Logs */}
-              <div className="flex-1 p-2.5 overflow-y-auto space-y-1 custom-scrollbar text-[11px]">
+              {/* Serial Logs Feed */}
+              <div className="flex-1 p-3 overflow-y-auto space-y-1 custom-scrollbar text-[11px] leading-relaxed">
                 {simulationTelemetry.serialLogs.map((log, idx) => (
-                  <div key={idx} className={`leading-snug ${log.isInput ? 'text-amber-400' : 'text-slate-300'}`}>
+                  <div key={idx} className={`${log.isInput ? 'text-amber-400 font-semibold' : 'text-slate-300'}`}>
                     <span className="text-slate-600 mr-2">[{new Date(log.timestamp).toLocaleTimeString()}]</span>
                     {log.isInput ? `> ${log.text}` : log.text}
                   </div>
@@ -404,20 +408,20 @@ export const BottomPanel: React.FC = () => {
                 <div ref={serialEndRef} />
               </div>
 
-              {/* Serial Input Bar */}
-              <form onSubmit={handleSendSerial} className="p-2 border-t border-slate-800 flex items-center space-x-2">
+              {/* Serial Command Input Bar */}
+              <form onSubmit={handleSendSerial} className="p-2 border-t border-white/[0.06] flex items-center space-x-2 bg-[#0c1220]">
                 <input
                   type="text"
                   value={serialInput}
                   onChange={(e) => setSerialInput(e.target.value)}
-                  placeholder="Send text or AT command to ESP32 UART..."
-                  className="flex-1 bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-slate-200 text-xs focus:outline-none focus:border-cyan-500 font-mono"
+                  placeholder="Send serial string or command to ESP32 UART..."
+                  className="flex-1 bg-[#070b14] border border-white/[0.08] rounded-xl px-3 py-1.5 text-slate-200 text-xs focus:outline-none focus:border-cyan-500 font-mono shadow-clay-inner"
                 />
                 <button
                   type="submit"
-                  className="px-3 py-1 bg-cyan-600 hover:bg-cyan-500 text-white rounded font-medium text-xs flex items-center space-x-1"
+                  className="px-4 py-1.5 clay-btn-primary text-white rounded-xl font-bold text-xs flex items-center space-x-1.5"
                 >
-                  <Send className="w-3 h-3" />
+                  <Send className="w-3.5 h-3.5" />
                   <span>Send</span>
                 </button>
               </form>
@@ -426,32 +430,32 @@ export const BottomPanel: React.FC = () => {
 
           {/* TAB 3: COMPILER OUTPUT */}
           {activeTab === 'compiler' && (
-            <div className="h-full bg-[#090d16] font-mono text-[11px] p-3 overflow-y-auto custom-scrollbar flex flex-col space-y-3">
+            <div className="h-full bg-[#070b14] font-mono text-[11px] p-3 overflow-y-auto custom-scrollbar flex flex-col space-y-3">
               {compileErrors.length > 0 && (
                 <div className="space-y-1.5">
-                  <div className="text-xs font-semibold text-red-400 flex items-center space-x-1.5">
-                    <AlertTriangle className="w-3.5 h-3.5" />
-                    <span>Compiler Diagnostics ({compileErrors.length}) — Click to jump to line</span>
+                  <div className="text-xs font-bold text-rose-400 flex items-center space-x-2">
+                    <AlertTriangle className="w-4 h-4" />
+                    <span>Compiler Diagnostics ({compileErrors.length}) — Click item to jump to code</span>
                   </div>
-                  <div className="space-y-1">
+                  <div className="space-y-1.5">
                     {compileErrors.map((err, idx) => (
                       <div
                         key={idx}
                         onClick={() => jumpToDiagnostic(err)}
-                        className="p-2 bg-red-950/40 hover:bg-red-900/50 border border-red-800/70 rounded cursor-pointer transition-colors flex items-center justify-between group"
+                        className="p-2.5 bg-rose-950/40 hover:bg-rose-900/50 border border-rose-800/80 rounded-xl cursor-pointer transition-all flex items-center justify-between group shadow-clay-card-sm"
                       >
                         <div className="flex-1 pr-2">
                           <div className="flex items-center space-x-2 text-[10px]">
-                            <span className="font-bold text-red-300 font-mono">
+                            <span className="font-bold text-rose-300 font-mono">
                               {err.file || 'sketch'}:{err.line}:{err.column}
                             </span>
-                            <span className="px-1.5 py-0.2 rounded bg-red-900 text-red-200 uppercase text-[9px] font-mono">
+                            <span className="px-1.5 py-0.2 rounded bg-rose-900 text-rose-200 uppercase text-[9px] font-mono">
                               {err.severity || 'error'}
                             </span>
                           </div>
                           <p className="text-slate-200 text-xs font-mono mt-0.5">{err.message}</p>
                         </div>
-                        <div className="text-[11px] text-cyan-400 opacity-80 group-hover:opacity-100 flex items-center space-x-1 font-sans bg-slate-900 px-2 py-1 rounded border border-slate-700">
+                        <div className="text-[11px] text-cyan-400 flex items-center space-x-1 font-sans bg-[#111728] px-2.5 py-1 rounded-xl border border-white/[0.08] shadow-clay-btn">
                           <span>Jump</span>
                           <ArrowRight className="w-3 h-3" />
                         </div>
@@ -462,13 +466,13 @@ export const BottomPanel: React.FC = () => {
               )}
 
               <div className="flex-1">
-                <div className="text-slate-500 text-[10px] uppercase font-bold tracking-wider mb-1">Raw Build Log</div>
+                <div className="text-slate-400 text-[10px] uppercase font-bold tracking-wider mb-1">Raw Compilation Log</div>
                 {compileOutput ? (
-                  <pre className="whitespace-pre-wrap text-slate-300 leading-relaxed font-mono bg-slate-950/60 p-2.5 rounded border border-slate-800">
+                  <pre className="whitespace-pre-wrap text-slate-300 leading-relaxed font-mono bg-[#090e18] p-3 rounded-xl border border-white/[0.06] shadow-clay-inner">
                     {compileOutput}
                   </pre>
                 ) : (
-                  <div className="text-slate-600 text-center py-10">
+                  <div className="text-slate-500 text-center py-12">
                     No compilation job has run yet. Click 'Compile & Run' to build for {project.boardId}.
                   </div>
                 )}
@@ -478,17 +482,17 @@ export const BottomPanel: React.FC = () => {
 
           {/* TAB 4: LOGIC ANALYZER */}
           {activeTab === 'instruments' && (
-            <div className="h-full flex flex-col bg-[#090d16]">
-              <div className="flex items-center justify-between px-3 py-1.5 border-b border-slate-800 text-[11px] text-slate-400">
-                <span className="font-mono">4-Channel Digital Logic Analyzer (50ms Timebase)</span>
-                <span className="text-cyan-400 font-mono">{simulationTelemetry.simulationTimeMs} ms elapsed</span>
+            <div className="h-full flex flex-col bg-[#070b14]">
+              <div className="flex items-center justify-between px-3 py-2 border-b border-white/[0.06] text-[11px] text-slate-400 bg-[#0c1220]">
+                <span className="font-mono font-bold text-slate-300">4-Channel Digital Logic Analyzer (50ms Timebase)</span>
+                <span className="text-cyan-400 font-mono font-bold">{simulationTelemetry.simulationTimeMs} ms elapsed</span>
               </div>
-              <div className="flex-1 relative">
+              <div className="flex-1 relative p-1">
                 <canvas
                   ref={logicCanvasRef}
-                  width={900}
-                  height={220}
-                  className="w-full h-full"
+                  width={1000}
+                  height={240}
+                  className="w-full h-full rounded-xl"
                 />
               </div>
             </div>
@@ -496,13 +500,13 @@ export const BottomPanel: React.FC = () => {
 
           {/* TAB 5: ELECTRICAL DIAGNOSTICS (ERC) */}
           {activeTab === 'erc' && (
-            <div className="h-full bg-[#090d16] p-3 overflow-y-auto custom-scrollbar space-y-2">
+            <div className="h-full bg-[#070b14] p-3 overflow-y-auto custom-scrollbar space-y-2.5">
               {diagnostics.map((diag) => (
                 <div
                   key={diag.id}
-                  className={`p-2.5 rounded border text-xs flex items-start space-x-2.5 ${
+                  className={`p-3 rounded-2xl border text-xs flex items-start space-x-3 shadow-clay-card-sm ${
                     diag.severity === 'error'
-                      ? 'bg-red-950/40 border-red-800/80 text-red-200'
+                      ? 'bg-rose-950/40 border-rose-800/80 text-rose-200'
                       : diag.severity === 'warning'
                       ? 'bg-amber-950/40 border-amber-800/80 text-amber-200'
                       : 'bg-emerald-950/40 border-emerald-800/80 text-emerald-200'
@@ -510,25 +514,25 @@ export const BottomPanel: React.FC = () => {
                 >
                   <div className="mt-0.5">
                     {diag.severity === 'error' ? (
-                      <XCircle className="w-4 h-4 text-red-400" />
+                      <XCircle className="w-5 h-5 text-rose-400" />
                     ) : diag.severity === 'warning' ? (
-                      <AlertTriangle className="w-4 h-4 text-amber-400" />
+                      <AlertTriangle className="w-5 h-5 text-amber-400" />
                     ) : (
-                      <CheckCircle className="w-4 h-4 text-emerald-400" />
+                      <CheckCircle className="w-5 h-5 text-emerald-400" />
                     )}
                   </div>
                   <div className="flex-1">
                     <div className="font-bold flex items-center justify-between">
-                      <span>{diag.title}</span>
+                      <span className="text-sm">{diag.title}</span>
                       {diag.blocksSimulation && (
-                        <span className="text-[9px] uppercase px-1.5 py-0.2 rounded bg-red-900/60 text-red-300 font-mono">
+                        <span className="text-[9px] uppercase px-2 py-0.5 rounded-full bg-rose-900/80 text-rose-200 font-mono font-bold">
                           Blocks Simulation
                         </span>
                       )}
                     </div>
-                    <p className="mt-0.5 text-slate-300 leading-normal">{diag.message}</p>
-                    <div className="mt-1.5 text-[11px] text-slate-400 bg-slate-950/60 p-1.5 rounded border border-slate-800/60">
-                      <span className="font-semibold text-slate-200">Recommended Correction: </span>
+                    <p className="mt-1 text-slate-300 leading-normal">{diag.message}</p>
+                    <div className="mt-2 text-[11px] text-slate-300 bg-[#0c1220] p-2 rounded-xl border border-white/[0.06] shadow-clay-inner">
+                      <span className="font-bold text-cyan-400">Recommended Correction: </span>
                       {diag.suggestion}
                     </div>
                   </div>

@@ -4,7 +4,8 @@ import { STARTER_PROJECTS } from '../../templates/starterProjects';
 import { BOARD_DEFINITIONS } from '../../boards/boardRegistry';
 import { 
   Play, Square, RotateCcw, Cpu, Download, Upload, 
-  Sparkles, CheckCircle, AlertTriangle, XCircle, FileCode, Layers, ShieldCheck
+  CheckCircle2, AlertTriangle, XCircle, Layers, ShieldCheck,
+  Undo2, Redo2, Sparkles
 } from 'lucide-react';
 
 export const TopNavbar: React.FC = () => {
@@ -57,135 +58,144 @@ export const TopNavbar: React.FC = () => {
   };
 
   return (
-    <header className="h-14 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-4 select-none z-30">
-      {/* Brand & Project Selector */}
+    <header className="h-16 bg-[#0f1523] border-b border-white/[0.06] flex items-center justify-between px-4 select-none z-30 shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+      {/* Brand & Project Info */}
       <div className="flex items-center space-x-3">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 font-bold tracking-wider">
-            <Cpu className="w-5 h-5 text-cyan-400" />
+        <div className="flex items-center space-x-2.5">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-600 p-[1.5px] shadow-clay-btn">
+            <div className="w-full h-full rounded-[14px] bg-[#101728] flex items-center justify-center">
+              <Cpu className="w-5 h-5 text-cyan-400 drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
+            </div>
           </div>
           <div>
             <div className="flex items-center space-x-1.5">
-              <span className="font-bold text-slate-100 text-sm tracking-wide">ROBOLAB</span>
-              <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800/50">
+              <span className="font-extrabold text-white text-sm tracking-wider font-sans">
+                ROBOLAB
+              </span>
+              <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-cyan-950/80 text-cyan-400 border border-cyan-800/40 shadow-clay-pill">
                 ESP32 Studio
               </span>
             </div>
-            <div className="text-[11px] text-slate-400 truncate max-w-[160px] font-medium">
+            <div className="text-[11px] text-slate-400 truncate max-w-[150px] font-medium mt-0.5">
               {project.name}
             </div>
           </div>
         </div>
 
-        <div className="h-6 w-px bg-slate-800" />
+        <div className="h-7 w-[1px] bg-white/[0.08] mx-1" />
 
-        {/* Starter Templates Dropdown */}
-        <div className="flex items-center space-x-1">
-          <Layers className="w-4 h-4 text-slate-400 ml-1" />
+        {/* Demo Project Selector */}
+        <div className="relative flex items-center">
+          <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#161f36] border border-white/[0.08] shadow-clay-card-sm text-xs text-slate-200 hover:text-white transition-all">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <select
+              className="bg-transparent text-slate-200 text-xs font-medium focus:outline-none cursor-pointer pr-1"
+              onChange={(e) => {
+                if (e.target.value) {
+                  loadStarterProject(e.target.value);
+                  e.target.value = '';
+                }
+              }}
+              defaultValue=""
+            >
+              <option value="" disabled className="bg-[#12192c] text-slate-400">⚡ Load Demo Project...</option>
+              {STARTER_PROJECTS.map((t) => (
+                <option key={t.id} value={t.id} className="bg-[#12192c] text-slate-200">
+                  {t.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Board Selector */}
+        <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#161f36] border border-white/[0.08] shadow-clay-card-sm text-xs text-slate-200">
+          <Layers className="w-3.5 h-3.5 text-cyan-400" />
           <select
-            className="bg-slate-800/80 hover:bg-slate-800 text-slate-200 text-xs rounded border border-slate-700/60 px-2 py-1.5 focus:outline-none focus:border-cyan-500 cursor-pointer"
-            onChange={(e) => {
-              if (e.target.value) {
-                loadStarterProject(e.target.value);
-                e.target.value = '';
-              }
-            }}
-            defaultValue=""
+            value={project.boardId}
+            onChange={(e) => setBoard(e.target.value)}
+            className="bg-transparent text-slate-200 text-xs font-medium focus:outline-none cursor-pointer"
           >
-            <option value="" disabled>Load Demo Project...</option>
-            {STARTER_PROJECTS.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.name}
+            {Object.values(BOARD_DEFINITIONS).map((b) => (
+              <option key={b.id} value={b.id} className="bg-[#12192c] text-slate-200">
+                {b.name}
               </option>
             ))}
           </select>
         </div>
 
-        {/* Board Selector */}
-        <select
-          value={project.boardId}
-          onChange={(e) => setBoard(e.target.value)}
-          className="bg-slate-800/80 hover:bg-slate-800 text-slate-200 text-xs rounded border border-slate-700/60 px-2.5 py-1.5 focus:outline-none focus:border-cyan-500 cursor-pointer"
-        >
-          {Object.values(BOARD_DEFINITIONS).map((b) => (
-            <option key={b.id} value={b.id}>
-              {b.name} ({b.chipFamily})
-            </option>
-          ))}
-        </select>
-
         {/* Framework Selector */}
         <select
           value={project.framework}
           onChange={(e) => setFramework(e.target.value as any)}
-          className="bg-slate-800/80 hover:bg-slate-800 text-slate-300 text-xs rounded border border-slate-700/60 px-2 py-1.5 focus:outline-none focus:border-cyan-500 cursor-pointer"
+          className="px-2.5 py-1.5 rounded-xl bg-[#161f36] border border-white/[0.08] shadow-clay-card-sm text-slate-300 text-xs font-medium focus:outline-none cursor-pointer hover:text-white"
         >
-          <option value="arduino">Arduino C++</option>
-          <option value="espidf">ESP-IDF (v5.5)</option>
+          <option value="arduino" className="bg-[#12192c]">Arduino C++</option>
+          <option value="espidf" className="bg-[#12192c]">ESP-IDF (v5.5)</option>
         </select>
       </div>
 
-      {/* Middle Execution & Status Controls */}
-      <div className="flex items-center space-x-2">
+      {/* Middle Execution & Live Status Controls */}
+      <div className="flex items-center space-x-3">
         {simulationStatus !== 'running' ? (
           <button
             onClick={compileAndRun}
             disabled={isCompiling}
-            className={`flex items-center space-x-2 px-4 py-1.5 rounded-md font-medium text-xs transition-all shadow-sm ${
+            className={`flex items-center space-x-2 px-5 py-2 rounded-2xl font-bold text-xs transition-all ${
               isCompiling
-                ? 'bg-amber-600/50 text-amber-200 cursor-wait'
-                : 'bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white shadow-emerald-950/40'
+                ? 'bg-amber-600/60 text-amber-100 cursor-wait shadow-clay-card'
+                : 'clay-btn-success text-white'
             }`}
           >
-            <Play className={`w-3.5 h-3.5 fill-current ${isCompiling ? 'animate-spin' : ''}`} />
-            <span>{isCompiling ? 'Compiling...' : 'Compile & Run'}</span>
+            <Play className={`w-4 h-4 fill-current ${isCompiling ? 'animate-spin' : ''}`} />
+            <span>{isCompiling ? 'Compiling Sketch...' : 'Compile & Run'}</span>
           </button>
         ) : (
           <button
             onClick={stopSimulation}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-md font-medium text-xs bg-red-600 hover:bg-red-500 active:bg-red-700 text-white transition-all shadow-sm shadow-red-950/40"
+            className="flex items-center space-x-2 px-4 py-2 rounded-2xl font-bold text-xs clay-btn-danger text-white"
           >
             <Square className="w-3.5 h-3.5 fill-current" />
-            <span>Stop</span>
+            <span>Stop Simulation</span>
           </button>
         )}
 
         <button
           onClick={resetSimulation}
-          title="Reset Simulation"
-          className="p-1.5 rounded text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-700/60 transition-colors"
+          title="Reset Simulation Hardware"
+          className="p-2 rounded-xl bg-[#161f36] hover:bg-[#1d2947] border border-white/[0.08] text-slate-400 hover:text-slate-100 shadow-clay-btn transition-all"
         >
           <RotateCcw className="w-4 h-4" />
         </button>
 
         {/* Simulation Mode Pill */}
-        <div className="flex items-center space-x-1 bg-slate-950/80 border border-slate-800 rounded px-2 py-1">
-          <span className="text-[10px] text-slate-400 uppercase font-semibold">Mode:</span>
+        <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#121828] border border-white/[0.08] shadow-clay-inner">
+          <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Mode:</span>
           <select
-            value={project.simulationMode || 'modeB'}
+            value={project.simulationMode || 'modeA'}
             onChange={(e) => setSimulationMode(e.target.value as any)}
-            className="bg-transparent text-[11px] font-medium text-cyan-400 focus:outline-none cursor-pointer"
+            className="bg-transparent text-xs font-semibold text-cyan-400 focus:outline-none cursor-pointer"
           >
-            <option value="modeA" className="bg-slate-900 text-slate-200">Mode A (Emulation)</option>
-            <option value="modeB" className="bg-slate-900 text-slate-200">Mode B (Peripherals)</option>
-            <option value="modeC" className="bg-slate-900 text-slate-200">Mode C (Logic Demo)</option>
+            <option value="modeA" className="bg-[#101728] text-slate-200">Mode A (Emulation)</option>
+            <option value="modeB" className="bg-[#101728] text-slate-200">Mode B (Peripherals)</option>
+            <option value="modeC" className="bg-[#101728] text-slate-200">Mode C (Logic Demo)</option>
           </select>
         </div>
 
-        {/* ERC Status Pill */}
-        <div className="flex items-center space-x-1 px-2 py-1 rounded text-[11px] font-medium bg-slate-800 border border-slate-700/60">
-          <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
+        {/* ERC Status Indicator */}
+        <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#121828] border border-white/[0.08] shadow-clay-inner text-xs font-medium">
+          <ShieldCheck className="w-4 h-4 text-slate-400" />
           {hasErrors ? (
-            <span className="flex items-center text-red-400">
-              <XCircle className="w-3.5 h-3.5 mr-1" /> ERC Errors
+            <span className="flex items-center font-semibold text-rose-400">
+              <XCircle className="w-3.5 h-3.5 mr-1" /> ERC Error
             </span>
           ) : hasWarnings ? (
-            <span className="flex items-center text-amber-400">
-              <AlertTriangle className="w-3.5 h-3.5 mr-1" /> ERC Warnings
+            <span className="flex items-center font-semibold text-amber-400">
+              <AlertTriangle className="w-3.5 h-3.5 mr-1" /> ERC Warning
             </span>
           ) : (
-            <span className="flex items-center text-emerald-400">
-              <CheckCircle className="w-3.5 h-3.5 mr-1" /> ERC Valid
+            <span className="flex items-center font-semibold text-emerald-400">
+              <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> ERC Passed
             </span>
           )}
         </div>
@@ -195,41 +205,42 @@ export const TopNavbar: React.FC = () => {
       <div className="flex items-center space-x-2">
         <button
           onClick={undo}
-          title="Undo"
-          className="p-1.5 rounded text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-700/60 text-xs"
+          title="Undo (Ctrl+Z)"
+          className="p-2 rounded-xl bg-[#161f36] hover:bg-[#1d2947] border border-white/[0.08] text-slate-300 hover:text-white shadow-clay-btn transition-all"
         >
-          Undo
+          <Undo2 className="w-3.5 h-3.5" />
         </button>
         <button
           onClick={redo}
-          title="Redo"
-          className="p-1.5 rounded text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-700/60 text-xs"
+          title="Redo (Ctrl+Y)"
+          className="p-2 rounded-xl bg-[#161f36] hover:bg-[#1d2947] border border-white/[0.08] text-slate-300 hover:text-white shadow-clay-btn transition-all"
         >
-          Redo
+          <Redo2 className="w-3.5 h-3.5" />
         </button>
 
         <button
           onClick={handleExport}
           title="Export Project File (.robolab)"
-          className="flex items-center space-x-1 px-2.5 py-1.5 rounded text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-medium transition-colors"
+          className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#161f36] hover:bg-[#1d2947] border border-white/[0.08] text-slate-200 hover:text-white shadow-clay-btn text-xs font-semibold transition-all"
         >
-          <Download className="w-3.5 h-3.5" />
+          <Download className="w-3.5 h-3.5 text-cyan-400" />
           <span>Export</span>
         </button>
 
+        {/* Hidden file input */}
         <input
           type="file"
           ref={fileInputRef}
           onChange={handleFileChange}
           accept=".robolab,.json"
-          className="hidden"
+          style={{ display: 'none' }}
         />
         <button
           onClick={() => fileInputRef.current?.click()}
-          title="Import Project File"
-          className="flex items-center space-x-1 px-2.5 py-1.5 rounded text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-medium transition-colors"
+          title="Import Project File (.robolab)"
+          className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#161f36] hover:bg-[#1d2947] border border-white/[0.08] text-slate-200 hover:text-white shadow-clay-btn text-xs font-semibold transition-all"
         >
-          <Upload className="w-3.5 h-3.5" />
+          <Upload className="w-3.5 h-3.5 text-cyan-400" />
           <span>Import</span>
         </button>
       </div>
