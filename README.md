@@ -6,7 +6,7 @@
 
 ### *Next-Generation Browser-Based Embedded Systems & Robotics Laboratory*
 
-[![Build Status](https://img.shields.io/badge/Build-Passing-10b981?style=for-the-badge&logo=github-actions&logoColor=white)](https://github.com/Safin313-REBORN/ORoXLAB)
+[![Build Status](https://img.shields.io/badge/Build-Passing-10b981?style=for-the-badge&logo=github-actions&logoColor=white)](https://github.com/Safin313-REBORN/ORoX_LAB)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178c6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18.3-61dafb?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-5.4-646cff?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
@@ -172,8 +172,8 @@ graph TD
 
 1. **Clone the repository**:
    ```bash
-   git clone git@github.com:Safin313-REBORN/ORoXLAB.git
-   cd ORoXLAB
+   git clone git@github.com:Safin313-REBORN/ORoX_LAB.git
+   cd ORoX_LAB
    ```
 
 2. **Run Automated Preflight & Test Suite**:
