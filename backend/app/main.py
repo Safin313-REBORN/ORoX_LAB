@@ -32,6 +32,7 @@ async def root():
     }
 
 @app.get("/health")
+@app.get("/api/health")
 async def health():
     cli_path = shutil.which("arduino-cli") or "/home/safin313/.local/bin/arduino-cli"
     cli_version = "unavailable"
