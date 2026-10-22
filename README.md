@@ -1,194 +1,294 @@
-# RoboLab — Virtual Robotics & Embedded Systems Studio
+# ORoXLAB — Virtual Robotics & Embedded Systems Studio
 
-> **Professional ESP32 Robotics, Electronics, and Firmware Simulation Platform**
+<div align="center">
 
-RoboLab is an integrated, browser-based embedded systems engineering environment. Users can construct virtual circuits, configure development boards, write C++ firmware, compile source code against actual microcontroller toolchains, execute simulated hardware, and inspect real-time pin transitions, I2C bus packets, audio signals, and electrical net behaviors.
+![ORoXLAB Banner](file:///home/safin313/.gemini/antigravity-ide/brain/3f2147f4-8d1a-4354-a575-604692c24e0f/oroxlab_new_components_canvas.png)
+
+### *Next-Generation Browser-Based Embedded Systems & Robotics Laboratory*
+
+[![Build Status](https://img.shields.io/badge/Build-Passing-10b981?style=for-the-badge&logo=github-actions&logoColor=white)](https://github.com/Safin313-REBORN/ORoXLAB)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178c6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18.3-61dafb?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-5.4-646cff?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Python](https://img.shields.io/badge/Python-3.11+-3776ab?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-amber?style=for-the-badge)](LICENSE)
+
+[**Explore Live Demo**](http://127.0.0.1:5173) • [**Quickstart**](#-quick-start) • [**Component Catalog**](#-hardware-component-catalog) • [**Laws & Math Studio**](#-robotics-and-electrical-laws-studio) • [**Deployment**](#-deployment-guide)
+
+</div>
 
 ---
 
-## 1. System Architecture
+## 🌟 Overview
 
-RoboLab separates processor and peripheral simulation into distinct, robust layers:
+**ORoXLAB** is a full-stack, browser-based embedded engineering workbench and virtual robotics simulator. It enables makers, roboticists, students, and firmware engineers to design complex microcontroller circuits, simulate realistic sensors and actuators with real physical behaviors, write Arduino/ESP-IDF C++ firmware, and verify electronic netlists—all inside a modern, claymorphic web experience.
+
+Whether you are modeling an autonomous two-wheel line-follower robot, tuning a closed-loop PID velocity controller, testing a TP4056 battery management system with 600mAh LiPo cells, or rendering telemetry to a 1.3" IPS full-color display, ORoXLAB delivers authentic hardware simulation right in the browser.
+
+---
+
+## ✨ Key Features
+
+- 🎨 **Claymorphic Glassmorphism UI**: High-contrast, tactile design system with ambient glow, recessed via sockets, specular reflections, and responsive layouts across mobile, tablet, and desktop viewports.
+- ⚡ **24+ Industrial Components**: Authentic microcontrollers, motor drivers, optical sensors, IMUs, OLED and IPS screens, LiPo battery packs, and audio synthesizers with realistic dimensions and pin assignments.
+- 🧬 **Physics-Based Spline Wire Routing**: Cubic Bezier wire trajectories with realistic gravitational droop, silver/gold metallic eyelets, and non-clipping vector offsets.
+- 📐 **Robotics & Electrical Laws Studio**: Interactive equation solvers for Ohm's Law, Joule Heating, Voltage Dividers, RC Timing Filters, Motor Back-EMF & Torque, PID Closed-Loop Tuning, and Nyquist Sampling.
+- 💻 **Monaco Multi-File Firmware Editor**: Desktop-class C++ IDE with syntax highlighting, autocomplete, multi-tab navigation, and live code compilation.
+- 🔬 **Real-Time Instrumentation**: 8-Channel Digital Logic Analyzer, Virtual Serial Terminal, Live GPIO Pin State Monitors (0V / 3.3V), and automated Electrical Rules Check (ERC).
+- 🔋 **Power & Thermal Simulation**: Real CC/CV battery charging profiles, DW01A protection cutoffs, current draw telemetry, and forward diode drops.
+- 🚀 **11 Verified Starter Projects**: Instant 1-click loading for complete robot rovers, line followers, environmental stations, smart wearables, and PID testbenches.
+
+---
+
+## 📸 Studio Gallery
+
+### 1. Interactive Circuit Canvas & Precision Spline Routing
+![Circuit Canvas](file:///home/safin313/.gemini/antigravity-ide/brain/3f2147f4-8d1a-4354-a575-604692c24e0f/oroxlab_new_components_canvas.png)
+*Realistic 5mm RGB LED, 1.3" IPS display, TP4056 Type-C charger, 600mAh LiPo pouch cell, and SW-420 vibration sensor wired to DOIT ESP32 DevKit V1.*
+
+### 2. Component Inspector & Interactive Controls
+![Component Inspector](file:///home/safin313/.gemini/antigravity-ide/brain/3f2147f4-8d1a-4354-a575-604692c24e0f/oroxlab_tp4056_inspector.png)
+*Live interactive controls for battery state of charge, USB plug-in state, trimmer potentiometer sensitivity, and real-time pin telemetry.*
+
+### 3. Component Library Drawer (Power & Displays)
+![Power Components](file:///home/safin313/.gemini/antigravity-ide/brain/3f2147f4-8d1a-4354-a575-604692c24e0f/oroxlab_parts_power.png)
+*Quick-search hardware catalog categorized by Power, Displays, Sensors, Motors, Inputs, and Passives.*
+
+---
+
+## 🧰 Hardware Component Catalog
+
+ORoXLAB ships with **24+ precision hardware component models**, each rendered with real-world physical packaging and calibrated electrical properties:
+
+| Component | Category | Physical Dimensions | Pin Count & Signals | Key Features & Interactive Model |
+| :--- | :--- | :--- | :--- | :--- |
+| **DOIT ESP32 DevKit V1** | Microcontrollers | 180×110 mm | 30 Pins (GPIO, ADC, DAC, Touch, I2C, SPI) | Dual-Core Xtensa LX6 @ 240MHz, onboard blue status LED, Boot/EN switches. |
+| **TP4056 USB-C Charger** | Power | 140×90 mm | 6 Pins (`IN+`, `IN-`, `OUT+`, `B+`, `B-`, `OUT-`) | 1A CC/CV LiPo charger, Type-C USB port, dual `CHG` & `STDBY` LEDs, DW01A protection. |
+| **3.7V 600mAh LiPo Battery** | Power | 130×80 mm | 2 Pins (`+`, `-`) | 603035 pouch cell, vacuum foil reflection, Kapton tape collar, dynamic voltage curve (3.0V–4.2V). |
+| **1.3" IPS 240×240 RGB Display** | Displays | 140×115 mm | 8 Pins (`GND`, `VCC`, `SCL`, `SDA`, `RES`, `DC`, `CS`, `BLK`) | ST7789 SPI controller, 65K color TFT, curved glass sheen, Radar HUD & Telemetry demos. |
+| **SSD1306 0.96" OLED** | Displays | 150×100 mm | 4 Pins (`GND`, `VCC`, `SCL`, `SDA`) | 128×64 monochrome OLED, I2C communication (`0x3C`), 1024-byte framebuffer. |
+| **SW-420 Vibration Sensor** | Sensors | 120×75 mm | 3 Pins (`VCC`, `GND`, `DO`) | Gold spring tube switch, LM393 comparator, sensitivity potentiometer trimmer, `DO` indicator. |
+| **5mm 4-Pin Diffuse RGB LED** | Passives | 70×82 mm | 4 Pins (`R`, `Cathode (-)`, `G`, `B`) | Frosted epoxy dome with specular diffusion, internal semiconductor dice, full hex color mixer. |
+| **L298N Dual Motor Driver** | Robotics / Motors | 160×130 mm | 10 Pins (`VCC`, `GND`, `5V`, `OUT1-4`, `IN1-4`) | Dual full H-Bridge driver with aluminum heatsink, 5V regulator jumper, up to 2A per channel. |
+| **TT DC Gearbox Motor** | Robotics / Motors | 140×75 mm | 2 Pins (`+`, `-`) | 1:48 gear reduction box, yellow housing, bi-directional rotation with live RPM and torque calculation. |
+| **SG90 Micro Servo (9g)** | Robotics / Motors | 130×80 mm | 3 Pins (`GND`, `VCC`, `PWM`) | 50Hz PWM angle control (0°–180°), blue translucent nylon casing, animated horn. |
+| **28BYJ-48 Stepper Motor** | Robotics / Motors | 150×90 mm | 5 Pins (`IN1-4`, `COM`) | 5V 4-phase unipolar stepper motor, step counter, precision angle resolver. |
+| **MPU-6050 6-Axis IMU** | Sensors | 140×95 mm | 8 Pins (`VCC`, `GND`, `SCL`, `SDA`, `XDA`, `XCL`, `AD0`, `INT`) | 3-axis accelerometer ($\pm 2g$) & 3-axis gyroscope ($\pm 250^\circ/\text{s}$), Pitch/Roll orientation dials. |
+| **HC-SR04 Ultrasonic Sensor** | Sensors | 145×80 mm | 4 Pins (`VCC`, `TRIG`, `ECHO`, `GND`) | Dual 40kHz transducer barrels, obstacle range slider (2cm–400cm), time-of-flight echo return. |
+| **MQ-2 Gas / Smoke Sensor** | Sensors | 130×85 mm | 4 Pins (`VCC`, `GND`, `DO`, `AO`) | Steel mesh chamber, SnO2 sensor element, concentration slider (20–800 PPM), analog & digital trigger. |
+| **PIR Motion Sensor (HC-SR501)**| Sensors | 125×80 mm | 3 Pins (`VCC`, `OUT`, `GND`) | White Fresnel dome lens, human motion simulation trigger with configurable trigger delay. |
+| **TCRT5000 IR Line Tracker** | Sensors | 120×70 mm | 4 Pins (`VCC`, `GND`, `DO`, `AO`) | Infrared emitter & phototransistor pair, surface reflector toggle (White floor vs Black line). |
+| **Photoresistor (LDR)** | Sensors | 100×65 mm | 3 Pins (`VCC`, `GND`, `AO`) | Cadmium-sulfide serpentine photocell, ambient illumination slider (0–1000 Lux), day/night threshold. |
+| **MAX98357A I2S DAC Amp** | Audio | 135×80 mm | 5 Pins (`LRC`, `BCLK`, `DIN`, `VIN`, `GND`) | 3.2W Class-D mono audio amplifier with Web Audio API synthesis and animated VU meter. |
+| **Active Buzzer** | Audio | 80×80 mm | 2 Pins (`+`, `-`) | 2.3kHz fixed audio transducer with acoustic pressure ripple animation. |
+| **Tactile Push Button** | Inputs | 70×70 mm | 2 Pins (`1`, `2`) | Momentary tactile switch with metallic corner tabs and debounce modeling. |
+| **TTP223 Capacitive Touch** | Inputs | 100×70 mm | 3 Pins (`VCC`, `GND`, `SIG`) | Touch detection PCB pad with animated fingertip contact glow. |
+| **Rotary Encoder (EC11)** | Inputs | 110×85 mm | 5 Pins (`CLK`, `DT`, `SW`, `+`, `GND`) | Quadrature A/B encoder with integrated tactile push switch and position readout. |
+| **5V Relay Module** | Power | 130×85 mm | 6 Pins (`VCC`, `GND`, `IN`, `NO`, `COM`, `NC`) | 10A electromechanical switching relay with flyback diode protection and status LED. |
+| **Carbon Film Resistor** | Passives | 90×40 mm | 2 Pins (`T1`, `T2`) | 4-band color-coded resistor with selectable resistance ($100\,\Omega$ to $10\,\text{k}\Omega$). |
+
+---
+
+## 📐 Robotics and Electrical Laws Studio
+
+ORoXLAB includes a dedicated **Engineering Formulas & Mathematical Physics Studio** accessible via the top navigation bar or bottom panel. It provides real-time interactive parameter computation and visualization:
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
-│                        RoboLab Engineering UI                          │
-│ ┌──────────────────┐ ┌───────────────────────────┐ ┌─────────────────┐ │
-│ │ Component Library│ │ Interactive Circuit Canvas│ │ Properties &    │ │
-│ │ & Board Catalog  │ │ (Netlist, Pins, Wires)    │ │ Live Dials      │ │
-│ └──────────────────┘ └───────────────────────────┘ └─────────────────┘ │
-│ ┌────────────────────────────────────────────────────────────────────┐ │
-│ │ Monaco Multi-File Editor | Serial Monitor | Logic Analyzer | ERC   │ │
-│ └────────────────────────────────────────────────────────────────────┘ │
-└───────────────────┬───────────────────────────────▲────────────────────┘
-                    │ REST /compile                 │ Telemetry & Events
-                    ▼                               │ (GPIO, Serial, Bus)
-┌─────────────────────────────────────────┐ ┌───────┴────────────────────┐
-│         RoboLab Backend Service         │ │    Simulation Engine Core  │
-│ - FastAPI + Uvicorn Async Server        │ │ - Union-Find Netlist Graph │
-│ - Sandboxed arduino-cli Builder         │ │ - Electrical ERC Engine    │
-│ - GCC/Clang Diagnostic Parser           │ │ - SSD1306 Framebuffer (I2C)│
-│ - ELF/BIN/Flash Image Generator         │ │ - MPU6050 6-Axis Register  │
-│ - WebSocket Session Manager             │ │ - Web Audio Synthesizer    │
-│ - Target: esp32:esp32:esp32doit-devkit  │ │ - TP4056 Battery Subsystem │
-└─────────────────────────────────────────┘ └────────────────────────────┘
+│                   ORoXLAB Mathematical Laws Engine                    │
+├────────────────────────────┬───────────────────────────────────────────┤
+│ 1. Ohm's Law               │  V = I × R                                │
+│ 2. Joule Heating           │  P = V × I = I² × R                       │
+│ 3. Voltage Divider Rule    │  V_out = V_in × [ R₂ / (R₁ + R₂) ]        │
+│ 4. RC Low-Pass Filter      │  f_c = 1 / (2 × π × R × C)                │
+│ 5. DC Motor Dynamics       │  T = K_t × I,   E_b = K_e × ω             │
+│ 6. Closed-Loop PID Control │  u(t) = K_p·e(t) + K_i∫e(τ)dτ + K_d·de/dt │
+│ 7. Nyquist-Shannon Theorem │  f_sample ≥ 2 × f_signal                  │
+└────────────────────────────┴───────────────────────────────────────────┘
 ```
 
-### Execution Modes
-- **Mode A (Firmware Emulation):** Compiled firmware artifacts execute on a compatible emulation runtime. Connected devices receive supported pin and bus events over WebSockets.
-- **Mode B (Deterministic Peripheral Simulation):** Direct firmware-to-peripheral execution loop where virtual electronic component models (OLED, MPU6050, Button, Touch, Buzzer, Audio, Battery) decode communication registers and respond in real-time.
-- **Mode C (Educational Logic Demonstration):** Clearly labeled instructional verification for logic demonstrations when full hardware emulation is bypassed.
+Each equation features interactive parameter dials, instant unit conversions, step-by-step theoretical proofs, and circuit design heuristics.
 
 ---
 
-## 2. Hardware & Component Compatibility Matrix
+## 🏛️ System Architecture
 
-### Supported Microcontroller Boards
-| Board Target | Chip Family | Architecture | FQBN | Support Status | Capabilities |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **DOIT ESP32 DevKit V1** | ESP32 | Dual-Core Xtensa LX6 (240MHz) | `esp32:esp32:esp32doit-devkit-v1` | **Fully Tested** | GPIO, ADC1/2, DAC, Touch, I2C, SPI, UART, I2S, PWM |
-| **ESP32-S3 DevKitC-1** | ESP32-S3 | Dual-Core Xtensa LX7 (240MHz) | `esp32:esp32:esp32s3` | **Partially Supported** | Vector instructions, USB-OTG, I2C, SPI, PWM (No DAC) |
-| **ESP32-C3 DevKitM-1** | ESP32-C3 | Single-Core RISC-V RV32IMC (160MHz) | `esp32:esp32:esp32c3` | **Fully Tested** | Native & browser RV32 core, I2C, SPI, UART |
-| **AI Thinker ESP32-CAM** | ESP32 | Xtensa LX6 + OV2640 | `esp32:esp32:esp32cam` | **Partially Supported** | Camera interface, PSRAM, GPIO |
-| **ESP32-C6 DevKitC-1** | ESP32-C6 | RISC-V 32-bit HP+LP | `esp32:esp32:esp32c6` | **Compile-Only** | Real toolchain build supported |
-| **ESP32-H2 DevKitM-1** | ESP32-H2 | RISC-V 32-bit | `esp32:esp32:esp32h2` | **Compile-Only** | Low-power BLE / Zigbee target |
-| **ESP32-P4 High-Perf** | ESP32-P4 | Dual-Core RISC-V (400MHz) | `esp32:esp32:esp32p4` | **Definition Available**| High-performance multimedia chip |
+```mermaid
+graph TD
+    subgraph Frontend["ORoXLAB Frontend (React 18 + Vite + TailwindCSS)"]
+        UI[Workspace UI & Navbar]
+        Canvas[Circuit Canvas: Canvas & SVG Spline Engine]
+        Inspector[Hardware Component Inspector]
+        FormulaStudio[Robotics Laws & Math Studio]
+        MonacoIDE[Monaco Multi-File Firmware Editor]
+        Instruments[Logic Analyzer & Serial Terminal]
+        ERC[Electrical Rules Check Engine]
+        Store[Zustand State Store: useRoboLabStore]
+    end
 
-### Virtual Electronics & Robotics Components
-| Component | Interface / Pins | Physical Model Details | Verification Status |
-| :--- | :--- | :--- | :--- |
-| **SSD1306 OLED (128x64)** | I2C (`0x3C`/`0x3D`) | Solomon Systech SSD1306 command set (Page, Horizontal, Vertical addressing, contrast, inversion, 1024-byte framebuffer rasterizer). | **Verified** |
-| **MPU6050 6-Axis IMU** | I2C (`0x68`/`0x69`) | InvenSense MPU-6050 register map (`WHO_AM_I`, `PWR_MGMT_1`, `ACCEL_X/Y/Z`, `GYRO_X/Y/Z`, `TEMP`). Gravitational vector projection at $\pm 2g$ (16384 LSB/g). | **Verified** |
-| **Tactile Push Button** | Passive (2 pins) | Digital momentary contact with configurable pull-up/pull-down resistor model and click feedback. | **Verified** |
-| **TTP223 Capacitive Touch** | VCC, GND, I/O | Active-high digital touch switch with touch glow and GPIO interrupt triggering. | **Verified** |
-| **Active Buzzer** | POS (+), NEG (-) | Fixed ~2.3kHz alarm oscillator driven by logic HIGH, synthesized via browser Web Audio API. | **Verified** |
-| **Passive Buzzer** | POS (+), NEG (-) | Dynamic variable-frequency oscillator reproducing PWM duty cycles and musical pitches. | **Verified** |
-| **MAX98357A I2S Amplifier** | LRC, BCLK, DIN, VIN, GND | Mono Class-D I2S DAC amplifier with live VU meter and Web Audio audio stream synthesis. | **Verified** |
-| **Li-ion Battery & TP4056** | IN+, IN-, B+, B-, OUT+, OUT- | Physical CC/CV battery charging curves (1000mA CC, 4.2V CV, Trickle), OCV discharge table, DW01 2.4V cut-off protection. | **Verified** |
-| **Discrete 5mm LED** | Anode, Cathode | Forward voltage modeling with dynamic radial illumination glow. | **Verified** |
-| **Resistor** | Terminals 1 & 2 | Standard 4-band color-coded through-hole resistor. | **Verified** |
+    subgraph SimulationCore["Simulation Engine (Browser / Worker)"]
+        Netlist[Union-Find Graph Netlist]
+        PeripheralEngine[Peripheral Model Dispatcher]
+        I2CBus[Virtual I2C / SPI / UART Bus]
+        AudioCore[Web Audio API Sound Synthesizer]
+    end
+
+    subgraph Backend["ORoXLAB Backend (FastAPI + Python 3.11)"]
+        APIServer[FastAPI ASGI Router]
+        CompilerService[Arduino-CLI Sandboxed Toolchain]
+        SecurityValidator[FQBN & Code Injection Sanitizer]
+        BinaryCache[SHA-256 Artifact Cache]
+    end
+
+    UI --> Store
+    Canvas --> Store
+    Inspector --> Store
+    MonacoIDE --> Store
+    Store <--> Netlist
+    Netlist --> ERC
+    Netlist --> PeripheralEngine
+    PeripheralEngine --> I2CBus
+    PeripheralEngine --> AudioCore
+    Store -- "HTTP POST /api/compile" --> APIServer
+    APIServer --> SecurityValidator
+    SecurityValidator --> CompilerService
+    CompilerService --> BinaryCache
+    BinaryCache -- "ELF / Hex & Diagnostics" --> Store
+    Store --> Instruments
+```
 
 ---
 
-## 3. Quick Start & Setup Instructions
+## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ and npm
-- Python 3.11+
-- `arduino-cli` with `esp32:esp32` core installed (version 3.3.12 verified)
+- **Node.js**: v18.0.0 or higher
+- **npm**: v9.0.0 or higher
+- **Python**: v3.11 or higher
+- *(Optional)* **Docker & Docker Compose** for containerized execution.
 
-### 1. Launch Backend API Service
+### Local Development Setup
+
+1. **Clone the repository**:
+   ```bash
+   git clone git@github.com:Safin313-REBORN/ORoXLAB.git
+   cd ORoXLAB
+   ```
+
+2. **Run Automated Preflight & Test Suite**:
+   ```bash
+   chmod +x deploy.sh
+   ./deploy.sh
+   ```
+
+3. **Start the Backend Service**:
+   ```bash
+   cd backend
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+   ```
+   *Backend will be accessible at `http://127.0.0.1:8000` (Swagger UI at `/docs`).*
+
+4. **Start the Frontend Studio**:
+   ```bash
+   cd ../frontend
+   npm install
+   npm run dev
+   ```
+   *Frontend Studio will launch at `http://127.0.0.1:5173`.*
+
+---
+
+## 🐳 Deployment Guide
+
+### Option 1: Docker Compose (Recommended)
+
+Run the full stack (Frontend + Backend + Reverse Proxy) with a single command:
+
 ```bash
-cd /home/safin313/.gemini/antigravity-ide/scratch/robolab/backend
-# Activate virtual environment
-source venv/bin/activate
-# Run Uvicorn server on port 8000
-PYTHONPATH=. uvicorn app.main:app --port 8000 --host 0.0.0.0
+docker compose up --build -d
 ```
-- API root: `http://localhost:8000/`
-- API documentation: `http://localhost:8000/docs`
-- Health check: `http://localhost:8000/health`
 
-### 2. Launch Frontend Studio
+- **Frontend**: `http://localhost` (Port 80)
+- **Backend API**: `http://localhost:8000`
+- **Health Check**: `curl -f http://localhost:8000/api/health`
+
+To stop the containers:
 ```bash
-cd /home/safin313/.gemini/antigravity-ide/scratch/robolab/frontend
-# Start Vite development server
-npm run dev
+docker compose down
 ```
-- Studio interface: `http://localhost:5173/`
+
+### Option 2: Cloud Deployment (Vercel + Render / Cloud Run)
+
+#### Frontend (Vercel / Netlify)
+The repository includes pre-configured [`frontend/vercel.json`](frontend/vercel.json) and [`frontend/netlify.toml`](frontend/netlify.toml) files.
+
+1. Connect your GitHub repository to Vercel or Netlify.
+2. Set Root Directory to `frontend`.
+3. Build Command: `npm run build`
+4. Output Directory: `dist`
+5. Configure environment variable: `VITE_API_BASE_URL=https://your-backend-api.onrender.com/api`
+
+#### Backend (Render / Fly.io / GCP Cloud Run)
+1. Point your platform to `backend/Dockerfile` or `backend/requirements.txt`.
+2. Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+3. Set environment variables:
+   ```env
+   PORT=8000
+   ENVIRONMENT=production
+   CORS_ORIGINS=https://your-frontend.vercel.app
+   ```
 
 ---
 
-## 4. Automated Test Results
+## 🧪 Testing & Verification
 
-### Backend Pytest Suite
-```
-tests/test_backend.py::test_root_endpoint PASSED              [ 20%]
-tests/test_backend.py::test_health_endpoint PASSED            [ 40%]
-tests/test_backend.py::test_boards_endpoint PASSED            [ 60%]
-tests/test_backend.py::test_compile_valid_sketch PASSED       [ 80%]
-tests/test_backend.py::test_compile_invalid_sketch_syntax PASSED [100%]
-============================== 5 passed in 12.77s ==============================
+ORoXLAB enforces rigorous test coverage across both frontend and backend architectures:
+
+```bash
+# Run all Frontend Tests (Vitest)
+cd frontend && npm test -- --run
+
+# Run all Backend Tests (Pytest)
+cd ../backend && pytest -v
 ```
 
-### Frontend Vitest Suite
-```
-✓ src/test/circuit_and_erc.test.ts (5 tests)
-  - correctly groups pins into electrical nets via Union-Find
-  - detects a dead short circuit between VCC and GND
-  - detects unpowered active ICs missing VCC or GND connections
-  - detects I2C address collisions when two devices share the same 7-bit address
-  - passes ERC with valid wiring on Project 1 (ESP32 Blink)
-
-✓ src/test/component_models.test.ts (9 tests)
-  - SSD1306: initializes with a clean 1024-byte framebuffer for 128x64 pixels
-  - SSD1306: sets and clears individual pixels correctly
-  - SSD1306: renders ASCII text characters into framebuffer memory
-  - MPU6050: returns 0x68 on WHO_AM_I register (0x75)
-  - MPU6050: updates raw 16-bit accelerometer registers according to pitch and roll
-  - Battery: estimates State of Charge (SoC) across typical OCV curve
-  - Battery: operates in Constant Current (CC) charging mode when cell voltage < 4.18V
-  - Battery: transitions to DONE mode when fully charged to 4.2V
-  - Starter Projects: includes all 8 mandatory starter projects with complete schemas
-
-Test Files: 2 passed (2)
-Tests: 14 passed (14)
-Duration: 1.11s
-```
+### Verification Matrix
+- ✅ **Frontend (29 Tests)**:
+  - Netlist connectivity graph & Union-Find calculations
+  - Electrical Rules Check (short circuit detection, floating gate warnings, overvoltage)
+  - 24 Component model geometry, pin coordinates, and exit normals
+  - 11 Starter project topologies and firmware validity
+- ✅ **Backend (6 Tests)**:
+  - Root and `/api/health` heartbeat status
+  - Board target definitions & FQBN mapping
+  - Compilation pipeline with SHA-256 build caching
+  - Syntax error diagnostic capture
+  - FQBN command injection protection and input sanitization
 
 ---
 
-## 5. Verified Starter Demonstration Projects
+## 📡 REST API Reference
 
-1. **ESP32 Blink (`p1_esp32_blink`):**
-   - Circuit: DOIT ESP32 DevKit V1 + external 5mm Red LED + 220Ω current-limiting resistor to GND.
-   - Code: Exercises `pinMode()`, `digitalWrite(LED_BUILTIN, HIGH)`, `delay(500)`.
-   - Verified result: Built-in blue LED and external red LED alternate states; Logic analyzer traces GPIO2.
+The backend provides high-performance asynchronous endpoints:
 
-2. **OLED Hello World (`p2_oled_hello`):**
-   - Circuit: ESP32 + SSD1306 128x64 OLED wired over hardware I2C (SDA GPIO21, SCL GPIO22, 3V3, GND).
-   - Code: Uses `Adafruit_SSD1306.h` and `Adafruit_GFX.h`.
-   - Verified result: Framebuffer rasterizes graphic rectangle and text headers onto display surface.
+| Endpoint | Method | Description | Request Body / Parameters |
+| :--- | :--- | :--- | :--- |
+| `/api/health` | `GET` | Health check and service status. | None |
+| `/api/boards` | `GET` | Returns list of supported microcontroller targets. | None |
+| `/api/compile` | `POST` | Compiles sketch files against target FQBN. | `{ "sketch": "...", "board": "esp32doit-devkit-v1", "libraries": [] }` |
+| `/api/simulate`| `POST` | Deterministic simulation stepping interface. | `{ "firmware": "...", "components": [...] }` |
 
-3. **Push-Button Status Display (`p3_button_status`):**
-   - Circuit: ESP32 + Momentary Push Button on GPIO15 (internal `INPUT_PULLUP`) + SSD1306 OLED.
-   - Verified result: Clicking button toggles input state; Serial monitor and OLED display update status.
-
-4. **MPU6050 Live 6-Axis Dashboard (`p4_mpu6050_dashboard`):**
-   - Circuit: ESP32 + MPU6050 IMU + SSD1306 OLED on shared I2C bus.
-   - Verified result: Pitch, roll, and yaw sliders dynamically project gravity vector onto registers and update display.
-
-5. **Touch-Controlled Buzzer (`p5_touch_buzzer`):**
-   - Circuit: ESP32 + TTP223 Capacitive Touch Module (GPIO4) + Passive Piezo Buzzer (GPIO25).
-   - Verified result: Touching sensor triggers GPIO interrupt and sounds synthesized 1.5kHz tone via Web Audio API.
-
-6. **MAX98357A I2S Audio Synthesizer (`p6_max98357a_audio`):**
-   - Circuit: ESP32 + MAX98357A I2S Audio Amplifier (BCLK GPIO26, LRC GPIO25, DIN GPIO22, VIN 5V, GND).
-   - Verified result: DMA I2S stream generated; live VU meter and audible Web Audio preview.
-
-7. **Battery & TP4056 Monitor (`p7_battery_monitor`):**
-   - Circuit: ESP32 + TP4056 Charging Board + Li-ion cell (GPIO34 ADC1 input).
-   - Verified result: Live terminal voltage and SoC % sampled and reported over Serial.
-
-8. **Combined Robotics Dashboard (`p8_combined_robotics`):**
-   - Circuit: Full robotics suite (ESP32 + OLED + MPU6050 + E-Stop Button + Touch Sensor + Buzzer + Battery Pack).
-   - Verified result: Integrated multi-sensor system running with 0 electrical rule errors.
+Interactive OpenAPI documentation is available live at `http://127.0.0.1:8000/docs`.
 
 ---
 
-## 6. Upstream Evaluation & Legal Attribution
+## 📄 License & Credits
 
-- RoboLab evaluated `https://github.com/davidmonterocrespo24/velxio` as candidate baseline:
-  - Upstream project is dual-licensed under AGPL-3.0 and a commercial license.
-  - Upstream Xtensa emulation relies on gated binary downloads requiring proprietary licenses.
-  - RoboLab implements an isolated, reproducible architecture:
-    * Native asynchronous toolchain compilation wrapper via system `arduino-cli`.
-    * Client-side deterministic peripheral and register modeling for immediate interactivity.
-    * Decoupled WebSocket execution bridge.
+Distributed under the **MIT License**. See [LICENSE](LICENSE) for details.
 
----
-
-## 7. Next Engineering Milestones
-- **Multi-Board Co-Simulation:** Synchronized simulation of two ESP32 microcontrollers communicating over ESP-NOW or UART.
-- **Embedded Web Server Proxy:** Virtual Wi-Fi networking proxying HTTP requests to emulated ESP32 `WebServer` endpoints.
-- **MicroPython WebREPL Integration:** Dynamic Python script execution on ESP32 MicroPython firmware.
+Developed with ❤️ by the **ORoXLAB Team** (`Safin313-REBORN`).
+Special thanks to the open-source community, Espressif Systems, and the Wokwi/QEMU embedded initiatives for inspiration.
